@@ -193,6 +193,14 @@ function Nav({ active }) {
 
 // ─── HERO ────────────────────────────────────────────────────────────────────
 function Hero() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <section id="hero" style={{
       minHeight: "100vh", background: C.warmBlack,
@@ -200,20 +208,27 @@ function Hero() {
       alignItems: "center", justifyContent: "center",
       padding: "80px 24px", position: "relative", overflow: "hidden",
     }}>
-      {/* Photographic vignette */}
+      {/* Photographic vignette — drifts slightly slower than scroll */}
       <div style={{
         position: "absolute", inset: 0,
         background: "radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.42) 100%)",
         pointerEvents: "none",
+        transform: `translateY(${scrollY * 0.12}px)`,
       }} />
-      {/* Warm sienna whisper */}
+      {/* Warm sienna whisper — drifts at its own rate */}
       <div style={{
         position: "absolute", inset: 0,
         background: "radial-gradient(ellipse at 55% 40%, rgba(181,84,27,0.05) 0%, transparent 65%)",
         pointerEvents: "none",
+        transform: `translateY(${scrollY * 0.08}px)`,
       }} />
 
-      <div style={{ maxWidth: 700, textAlign: "center", position: "relative", zIndex: 1 }}>
+      {/* Hero content — parallax: moves at 30% of scroll speed */}
+      <div style={{
+        maxWidth: 700, textAlign: "center", position: "relative", zIndex: 1,
+        transform: `translateY(${scrollY * 0.28}px)`,
+        willChange: "transform",
+      }}>
         <p style={{
           fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.26em",
           textTransform: "uppercase", color: C.sienna, marginBottom: 44, fontWeight: 600,
@@ -481,7 +496,7 @@ function StorySection({ onRespond }) {
           <Body>Twelve hundred acres in Grand Prairie, Texas. Twenty minutes from one of the world's great airports. At the center of the fastest-growing major metropolitan area in the United States. On land that has been a seabed, a prairie, a Comanche hunting ground, a Mustang factory, a Navy airfield, and everything in between. On a peninsula crowned with elevation change that produces — if graded right — a 270-degree view of Mountain Creek Lake that no one in Dallas knows exists.</Body>
           <Body>The opportunity isn't just financial, though the financial case is overwhelming. The opportunity is generational. Bandon Dunes transformed a dying Oregon fishing town into one of golf's holy sites in twenty-five years. Pinehurst has compounded mythology for one hundred and thirty. What was built in those places — the architecture, the land ethic, the walking culture, the accumulated stories of players and caddies and moments — outlasts every pro forma.</Body>
           <Body>That's what this conversation is about. Not what this project can earn. What it can become.</Body>
-          <Body>Randy Hoffacker's first site read said it plainly: <em>"I want you to feel lost out there. All the roofs are low, single to two stories max, so you don't have those markers to identify where you are in the world. I want you to feel like you are an escape. You are not in Dallas."</em></Body>
+          <Body>The design brief that came back from the first site walk set the tone for everything that followed. Keep the rooflines low — one to two stories, no higher — so there are no urban markers to orient by. No sense of scale that reminds you where you are. An architecture of purposeful disorientation: the kind that makes you feel, for the first time in a long time, like you've genuinely escaped.</Body>
           <Body>That's the brief. That's the story. Everything that follows is the evidence that it's possible — and the argument that it's time.</Body>
           <GoDeeper links={[
             { label: "Bandon Dunes", url: "https://www.bandondunesgolf.com" },
@@ -854,7 +869,7 @@ function CompsSection({ onRespond }) {
 const TEAM = [
   {
     name: "Randy Hoffacker", role: "Master Planner", org: "Work Architecture",
-    bio: "Randy Hoffacker is the spatial architect of this vision — the person who translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a prior working history with Escalante Golf properties, Randy brought the first site read that set the tone for everything: 'I want you to feel lost out there.' His background in construction management means he doesn't just design programs — he designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
+    bio: "Randy Hoffacker is the spatial architect of this vision — the person who translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a prior working history with Escalante Golf properties, his first site read set the direction: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. His background in construction management means he doesn't just design programs — he designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
   },
   {
     name: "David McDonald", role: "President", org: "Escalante Golf",
@@ -863,7 +878,7 @@ const TEAM = [
   },
   {
     name: "OCM Golf", role: "Golf Course Architects / Design-Build", org: "Ogilvy · Cocking · Mead",
-    bio: "OCM Golf is the only firm in golf architecture that designs, builds, and maintains its own work — from first concept sketch through construction, grow-in, and agronomic consultation. Geoff Ogilvy (2006 US Open Champion at Winged Foot) grew up on Melbourne's Sandbelt courses and has said plainly: 'We don't like punitive stuff. The great courses bring the 18-handicapper and the scratch golfer closer together.' Their first U.S. project was Shady Oaks in Fort Worth. Their Luling Sport course will be their first walking-only project in the state — a direct precedent for this work.",
+    bio: "OCM Golf is the only firm in golf architecture that designs, builds, and maintains its own work — from first concept sketch through construction, grow-in, and agronomic consultation. Geoff Ogilvy (2006 US Open Champion at Winged Foot) grew up on Melbourne's Sandbelt courses, where golf rewards creativity and punishes nothing. The philosophy runs through every OCM design: architecture that closes the gap between the scratch player and the 18-handicapper rather than widen it. Their first U.S. project was Shady Oaks in Fort Worth. Their Luling Sport course will be their first walking-only project in the state — a direct precedent for this work.",
     link: { label: "ocm.golf", url: "https://www.ocm.golf" },
   },
   {
