@@ -931,7 +931,7 @@ function LoopSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch("https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT", {
+      await fetch("https://formspree.io/f/xaqlygol", {
         method: "POST",
         body: JSON.stringify(formData),
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
