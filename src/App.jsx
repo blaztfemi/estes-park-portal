@@ -211,9 +211,9 @@ function Hero() {
       {/* Hero photo layer — Mountain Creek Lake feel */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=85)",
+        backgroundImage: "url(/joe-pool-lake.jpg)",
         backgroundSize: "cover",
-        backgroundPosition: "center 40%",
+        backgroundPosition: "center 35%",
         filter: "sepia(10%) contrast(94%) brightness(78%)",
         transform: `translateY(${scrollY * 0.35}px)`,
         willChange: "transform",
@@ -1316,9 +1316,9 @@ export default function App() {
       <Nav active={activeSection} />
       <Hero />
       <StorySection  onRespond={scrollToLoop} />
-      <ImageDivider src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1600&q=85" position="center 55%" />
+      <ImageDivider src="/cedar-hill-boardwalk.webp" position="center 50%" />
       <PlaceSection  onRespond={scrollToLoop} />
-      <ImageDivider src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1600&q=85" position="center 40%" />
+      <ImageDivider src="/cedar-hill-wetlands.jpg" position="center 40%" />
       <MarketSection onRespond={scrollToLoop} />
       <ImageDivider src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1600&q=85" position="center 60%" />
       <CompsSection  onRespond={scrollToLoop} />
