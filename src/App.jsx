@@ -1,0 +1,1148 @@
+import { useState, useEffect } from "react";
+
+// ─── COLOR TOKENS ────────────────────────────────────────────────────────────
+const C = {
+  parchment:    "#F5F0E8",   // primary background (warmer than prototype)
+  parchmentAlt: "#EDE8DC",   // alternate section background
+  warmBlack:    "#1A1814",   // hero + loop background
+  ink:          "#1C1C1A",   // primary text
+  sienna:       "#B5541B",   // accent
+  sage:         "#5C6B5A",   // secondary / labels
+  rule:         "#D9D0C0",   // dividers
+  surface:      "#EDE8DC",   // card surface
+  warmBrown:    "#3D2B1A",   // pull quote text
+  compOpen:     "#EAE4D8",   // open comp card content bg
+};
+
+// ─── GLOBAL STYLES ───────────────────────────────────────────────────────────
+const globalStyles = `
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: ${C.parchment};
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 27px,
+      rgba(180,165,140,0.12) 27px,
+      rgba(180,165,140,0.12) 28px
+    );
+    color: ${C.ink};
+    font-family: 'Lora', serif;
+  }
+
+  /* Paper grain overlay */
+  .grain {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat; background-size: 200px 200px;
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .revealed { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: ${C.parchment}; }
+  ::-webkit-scrollbar-thumb { background: ${C.rule}; border-radius: 2px; }
+
+  /* Links */
+  a { color: ${C.sienna}; text-decoration: underline; text-underline-offset: 3px; }
+  a:hover { opacity: 0.75; }
+
+  /* Nav link hover — underline slides in from left */
+  .nav-link {
+    position: relative;
+    text-decoration: none !important;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: ${C.sienna};
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+  .nav-link:hover { color: ${C.sienna} !important; opacity: 1 !important; }
+  .nav-link:hover::after { transform: scaleX(1); }
+
+  /* Feedback button arrow nudge */
+  .feedback-arrow { display: inline-block; transition: transform 0.2s ease; }
+  .feedback-btn:hover .feedback-arrow { transform: translateX(4px); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .desktop-nav { display: none !important; }
+    .mobile-menu-btn { display: block !important; }
+    .comp-open-content { padding: 0 16px 16px !important; }
+  }
+  @media (min-width: 820px) {
+    .two-col { grid-template-columns: 3fr 2fr !important; }
+  }
+`;
+
+// ─── SCROLL REVEAL HOOK ──────────────────────────────────────────────────────
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll(".reveal");
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("revealed"); }),
+      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function Nav({ active }) {
+  const [visible, setVisible] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setVisible(window.scrollY > window.innerHeight * 0.7);
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  const links = [
+    { id: "story",  label: "The Story"  },
+    { id: "place",  label: "The Place"  },
+    { id: "market", label: "The Market" },
+    { id: "comps",  label: "The Comps"  },
+    { id: "team",   label: "The Team"   },
+    { id: "loop",   label: "The Loop"   },
+  ];
+
+  return (
+    <nav style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+      background: C.parchment, borderBottom: `1px solid ${C.rule}`,
+      opacity: visible ? 1 : 0, pointerEvents: visible ? "all" : "none",
+      transition: "opacity 0.4s ease",
+      fontFamily: "'DM Sans', sans-serif",
+    }}>
+      <div style={{
+        maxWidth: 1100, margin: "0 auto", padding: "0 24px",
+        display: "flex", alignItems: "center", justifyContent: "space-between", height: 52,
+      }}>
+        {/* Masthead — left side */}
+        <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
+          <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600, color: C.ink }}>
+            Estes Park
+          </span>
+          <span style={{ width: 1, height: 18, background: C.rule, margin: "0 14px", display: "inline-block", flexShrink: 0 }} />
+          <span style={{
+            fontSize: 10, letterSpacing: "0.1em", color: "rgba(28,28,26,0.38)",
+            fontFamily: "'DM Sans', sans-serif", fontWeight: 400, whiteSpace: "nowrap",
+          }}>
+            Grand Prairie, Texas · March 2026
+          </span>
+        </div>
+
+        {/* Desktop nav links */}
+        <div style={{ display: "flex", gap: 26, alignItems: "center" }} className="desktop-nav">
+          {links.map(l => (
+            <a key={l.id} href={`#${l.id}`} className="nav-link" style={{
+              fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase",
+              fontWeight: active === l.id ? 600 : 400,
+              color: active === l.id ? C.sienna : C.ink,
+              fontFamily: "'DM Sans', sans-serif",
+              transition: "color 0.2s",
+            }}>{l.label}</a>
+          ))}
+        </div>
+
+        {/* Mobile hamburger */}
+        <button onClick={() => setMenuOpen(!menuOpen)}
+          style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: 4 }}
+          className="mobile-menu-btn">
+          <div style={{ width: 22, height: 1.5, background: C.ink, marginBottom: 5 }} />
+          <div style={{ width: 22, height: 1.5, background: C.ink, marginBottom: 5 }} />
+          <div style={{ width: 22, height: 1.5, background: C.ink }} />
+        </button>
+      </div>
+
+      {menuOpen && (
+        <div style={{
+          background: C.parchment, borderTop: `1px solid ${C.rule}`,
+          padding: "16px 24px", display: "flex", flexDirection: "column", gap: 16,
+        }}>
+          {links.map(l => (
+            <a key={l.id} href={`#${l.id}`} onClick={() => setMenuOpen(false)} style={{
+              fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase",
+              color: C.ink, textDecoration: "none", fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+            }}>{l.label}</a>
+          ))}
+        </div>
+      )}
+    </nav>
+  );
+}
+
+// ─── HERO ────────────────────────────────────────────────────────────────────
+function Hero() {
+  return (
+    <section id="hero" style={{
+      minHeight: "100vh", background: C.warmBlack,
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
+      padding: "80px 24px", position: "relative", overflow: "hidden",
+    }}>
+      {/* Photographic vignette */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.42) 100%)",
+        pointerEvents: "none",
+      }} />
+      {/* Warm sienna whisper */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "radial-gradient(ellipse at 55% 40%, rgba(181,84,27,0.05) 0%, transparent 65%)",
+        pointerEvents: "none",
+      }} />
+
+      <div style={{ maxWidth: 700, textAlign: "center", position: "relative", zIndex: 1 }}>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.26em",
+          textTransform: "uppercase", color: C.sienna, marginBottom: 44, fontWeight: 600,
+        }}>
+          Estes Park &nbsp;·&nbsp; Grand Prairie, Texas &nbsp;·&nbsp; 1,200 Acres
+        </p>
+
+        {/* Field report headline — slightly smaller, more elegant */}
+        <h1 style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(26px, 4.2vw, 54px)",
+          fontWeight: 400, color: C.parchment, lineHeight: 1.22, marginBottom: 28,
+          letterSpacing: "-0.01em", fontVariantLigatures: "common-ligatures",
+        }}>
+          What does a place owe the people who will never know it existed?
+        </h1>
+
+        {/* 60px sienna rule */}
+        <div style={{ width: 60, height: 1, background: C.sienna, margin: "0 auto 28px" }} />
+
+        <p style={{
+          fontFamily: "'Lora', serif", fontStyle: "italic",
+          fontSize: "clamp(14px, 1.8vw, 19px)",
+          color: "rgba(245,240,232,0.58)", lineHeight: 1.8, marginBottom: 52,
+        }}>
+          100 million years of geology. 15,000 years of human presence.<br />
+          One story no one has told.
+        </p>
+
+        <a href="#story" style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.2em",
+          textTransform: "uppercase", color: C.sienna, textDecoration: "none",
+          display: "inline-flex", alignItems: "center", gap: 10, fontWeight: 600,
+        }}>
+          Begin reading &nbsp;↓
+        </a>
+      </div>
+
+      {/* Site coordinates — bottom-left, field survey stamp */}
+      <p style={{
+        position: "absolute", bottom: 32, left: 32,
+        fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.15em",
+        color: "rgba(245,240,232,0.28)", fontWeight: 400,
+      }}>
+        32°44′N &nbsp; 97°00′W
+      </p>
+
+      {/* Date stamp — bottom-right */}
+      <p style={{
+        position: "absolute", bottom: 32, right: 32,
+        fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.15em",
+        textTransform: "uppercase", color: "rgba(245,240,232,0.28)",
+      }}>
+        Design Charrette &nbsp;·&nbsp; March 31, 2026
+      </p>
+    </section>
+  );
+}
+
+// ─── SECTION LABEL ───────────────────────────────────────────────────────────
+// Chapter-opening: 40px divider → 20px space → left-bordered label
+function SectionLabel({ number, label, dark = false }) {
+  return (
+    <div className="reveal" style={{ marginBottom: 24 }}>
+      <div style={{ width: 40, height: 1, background: C.rule, marginBottom: 20 }} />
+      <p style={{
+        fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.15em",
+        textTransform: "uppercase", fontWeight: 600,
+        color: dark ? "rgba(245,240,232,0.45)" : C.sage,
+        borderLeft: `2px solid ${C.sienna}`, paddingLeft: 12,
+        display: "inline-block",
+      }}>
+        {number} &nbsp;—&nbsp; {label}
+      </p>
+    </div>
+  );
+}
+
+// ─── RULE ────────────────────────────────────────────────────────────────────
+function Rule({ dark = false }) {
+  return <div style={{ height: 1, background: dark ? "rgba(245,240,232,0.08)" : C.rule, margin: "36px 0" }} />;
+}
+
+// ─── PULL QUOTE ──────────────────────────────────────────────────────────────
+function PullQuote({ children, dark = false }) {
+  return (
+    <blockquote className="reveal reveal-delay-2" style={{
+      borderLeft: `4px solid ${C.sienna}`,
+      paddingLeft: 24, marginLeft: 0,
+      marginTop: 40, marginBottom: 40,
+    }}>
+      <p style={{
+        fontFamily: "'Playfair Display', serif", fontStyle: "italic",
+        fontSize: "clamp(20px, 2.8vw, 28px)", lineHeight: 1.65,
+        color: dark ? "rgba(245,240,232,0.82)" : C.warmBrown,
+        fontWeight: 400, fontVariantLigatures: "common-ligatures",
+      }}>{children}</p>
+    </blockquote>
+  );
+}
+
+// ─── STAT CARD ───────────────────────────────────────────────────────────────
+// Field note style: large sienna number, 40px pencil underline, no border/bg
+function StatCard({ stat, label, sub, dark = false }) {
+  return (
+    <div className="reveal reveal-delay-3" style={{ marginBottom: 40 }}>
+      <p style={{
+        fontFamily: "'Playfair Display', serif",
+        fontSize: "clamp(32px, 4vw, 48px)",
+        fontWeight: 700, color: C.sienna, lineHeight: 1,
+        fontVariantLigatures: "common-ligatures",
+      }}>{stat}</p>
+      <div style={{ width: 40, height: 1, background: C.sienna, marginTop: 10, marginBottom: 10, opacity: 0.55 }} />
+      <p style={{
+        fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: dark ? "rgba(245,240,232,0.7)" : C.ink, fontWeight: 500,
+      }}>{label}</p>
+      {sub && (
+        <p style={{
+          fontFamily: "'Lora', serif", fontSize: 13,
+          color: dark ? "rgba(245,240,232,0.45)" : "rgba(28,28,26,0.52)",
+          marginTop: 5, fontStyle: "italic", lineHeight: 1.6,
+        }}>{sub}</p>
+      )}
+    </div>
+  );
+}
+
+// ─── SECTION WRAPPER ─────────────────────────────────────────────────────────
+function SectionWrapper({ id, children, alt = false, dark = false }) {
+  const bg = dark ? C.warmBlack : (alt ? C.parchmentAlt : C.parchment);
+  return (
+    <section id={id} style={{
+      position: "relative", zIndex: 1,
+      padding: "88px 24px",
+      background: bg,
+      borderBottom: `1px solid ${dark ? "rgba(255,255,255,0.05)" : C.rule}`,
+    }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>{children}</div>
+    </section>
+  );
+}
+
+// ─── TWO COLUMN ──────────────────────────────────────────────────────────────
+function TwoCol({ left, right }) {
+  return (
+    <div className="two-col" style={{ display: "grid", gridTemplateColumns: "1fr", gap: 52 }}>
+      <div>{left}</div>
+      <div>{right}</div>
+    </div>
+  );
+}
+
+// ─── BODY COPY ───────────────────────────────────────────────────────────────
+function Body({ children, dark = false }) {
+  return (
+    <p className="reveal" style={{
+      fontFamily: "'Lora', serif", fontSize: "clamp(15px, 1.6vw, 17px)",
+      lineHeight: 1.92, color: dark ? "rgba(245,240,232,0.78)" : C.ink, marginBottom: 22,
+    }}>{children}</p>
+  );
+}
+
+// ─── SUBHEAD ─────────────────────────────────────────────────────────────────
+function SubHead({ children, dark = false }) {
+  return (
+    <h3 className="reveal" style={{
+      fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.16em",
+      textTransform: "uppercase", fontWeight: 500,
+      color: dark ? "rgba(245,240,232,0.45)" : C.sage,
+      marginTop: 36, marginBottom: 14,
+    }}>{children}</h3>
+  );
+}
+
+// ─── GO DEEPER ───────────────────────────────────────────────────────────────
+function GoDeeper({ links }) {
+  return (
+    <p className="reveal" style={{
+      fontFamily: "'DM Sans', sans-serif", fontSize: 12, marginTop: 20,
+      color: "rgba(28,28,26,0.5)",
+    }}>
+      <span style={{ letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>Go Deeper →&nbsp;</span>
+      {links.map((l, i) => (
+        <span key={i}>
+          <a href={l.url} target="_blank" rel="noopener noreferrer"
+            style={{ color: C.sienna, fontSize: 12 }}>{l.label}</a>
+          {i < links.length - 1 ? " · " : ""}
+        </span>
+      ))}
+    </p>
+  );
+}
+
+// ─── FEEDBACK PROMPT ─────────────────────────────────────────────────────────
+function FeedbackPrompt({ question, onRespond }) {
+  return (
+    <div className="reveal" style={{
+      marginTop: 56, padding: "28px 32px",
+      background: C.parchmentAlt, borderTop: `2px solid ${C.sienna}`,
+    }}>
+      <p style={{
+        fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.18em",
+        textTransform: "uppercase", color: C.sage, marginBottom: 10, fontWeight: 600,
+      }}>Your thinking</p>
+      <p style={{
+        fontFamily: "'Lora', serif", fontStyle: "italic",
+        fontSize: "clamp(14px, 1.7vw, 17px)", lineHeight: 1.8,
+        color: C.ink, marginBottom: 22,
+      }}>{question}</p>
+      <button onClick={onRespond} className="feedback-btn" style={{
+        fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.14em",
+        textTransform: "uppercase", fontWeight: 600, color: C.sienna,
+        background: "none", border: `1px solid ${C.sienna}`, padding: "10px 20px",
+        cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 2,
+        transition: "background 0.2s, color 0.2s",
+      }}
+        onMouseEnter={e => { e.currentTarget.style.background = C.sienna; e.currentTarget.style.color = C.parchment; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = C.sienna; }}
+      >
+        Share your thinking<span className="feedback-arrow">&nbsp;→</span>
+      </button>
+    </div>
+  );
+}
+
+// ─── SECTION HEADLINE ────────────────────────────────────────────────────────
+function SectionH2({ children, dark = false, maxWidth = 760 }) {
+  return (
+    <h2 className="reveal" style={{
+      fontFamily: "'Playfair Display', serif",
+      fontSize: "clamp(28px, 4.5vw, 54px)",
+      fontWeight: 400, lineHeight: 1.18, marginBottom: 8, maxWidth,
+      color: dark ? C.parchment : C.ink,
+      fontVariantLigatures: "common-ligatures",
+    }}>{children}</h2>
+  );
+}
+
+function SectionSub({ children, dark = false }) {
+  return (
+    <p className="reveal reveal-delay-1" style={{
+      fontFamily: "'Lora', serif", fontStyle: "italic",
+      fontSize: "clamp(15px, 1.9vw, 20px)",
+      color: dark ? "rgba(245,240,232,0.48)" : "rgba(28,28,26,0.58)",
+      marginBottom: 40, lineHeight: 1.55,
+    }}>{children}</p>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 1 — THE STORY
+// ═══════════════════════════════════════════════════════════════════════════════
+function StorySection({ onRespond }) {
+  return (
+    <SectionWrapper id="story">
+      <SectionLabel number="01" label="The Story" />
+      <SectionH2 maxWidth={720}>This is not a golf course.</SectionH2>
+      <SectionSub>A chance to leave something indelible.</SectionSub>
+      <Rule />
+      <TwoCol
+        left={<>
+          <Body>There's a particular kind of project that doesn't come along often. Not the kind where the numbers align and the market is proven and the path of least resistance is obvious. The other kind. The kind where you look at a piece of land and feel something shift — where the story the site is already telling is more compelling than anything a branding agency could invent.</Body>
+          <Body>This is that project.</Body>
+          <Body>Twelve hundred acres in Grand Prairie, Texas. Twenty minutes from one of the world's great airports. At the center of the fastest-growing major metropolitan area in the United States. On land that has been a seabed, a prairie, a Comanche hunting ground, a Mustang factory, a Navy airfield, and everything in between. On a peninsula crowned with elevation change that produces — if graded right — a 270-degree view of Mountain Creek Lake that no one in Dallas knows exists.</Body>
+          <Body>The opportunity isn't just financial, though the financial case is overwhelming. The opportunity is generational. Bandon Dunes transformed a dying Oregon fishing town into one of golf's holy sites in twenty-five years. Pinehurst has compounded mythology for one hundred and thirty. What was built in those places — the architecture, the land ethic, the walking culture, the accumulated stories of players and caddies and moments — outlasts every pro forma.</Body>
+          <Body>That's what this conversation is about. Not what this project can earn. What it can become.</Body>
+          <Body>Randy Hoffacker's first site read said it plainly: <em>"I want you to feel lost out there. All the roofs are low, single to two stories max, so you don't have those markers to identify where you are in the world. I want you to feel like you are an escape. You are not in Dallas."</em></Body>
+          <Body>That's the brief. That's the story. Everything that follows is the evidence that it's possible — and the argument that it's time.</Body>
+          <GoDeeper links={[
+            { label: "Bandon Dunes", url: "https://www.bandondunesgolf.com" },
+            { label: "Pinehurst Resort", url: "https://www.pinehurst.com" },
+          ]} />
+        </>}
+        right={<>
+          <PullQuote>"The land has been a seabed, a prairie, a hunting ground, a battlefield, a cotton farm, a Mustang factory, and a Navy base. What it has never been is a place where people come to walk quietly through native grass and feel the particular silence that exists when a city of 8 million is 20 miles away but invisible."</PullQuote>
+          <StatCard stat="1,200" label="Acres" sub="Nearly double PGA Frisco's footprint" />
+          <StatCard stat="20 min" label="From DFW International Airport" sub="The closest world-class golf destination to a major U.S. metro — anywhere" />
+        </>}
+      />
+      <FeedbackPrompt
+        question="What does 'leaving something indelible' mean to you for this project? What would make this worth pointing to in 50 years?"
+        onRespond={onRespond}
+      />
+    </SectionWrapper>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 2 — THE PLACE
+// ═══════════════════════════════════════════════════════════════════════════════
+function PlaceSection({ onRespond }) {
+  return (
+    <SectionWrapper id="place" alt>
+      <SectionLabel number="02" label="The Place" />
+      <SectionH2>The Land Remembers What We Forgot</SectionH2>
+      <SectionSub>1,200 acres. 100 million years. One story no one has told.</SectionSub>
+      <Rule />
+      <TwoCol
+        left={<>
+          <SubHead>One Hundred Million Years Under Water</SubHead>
+          <Body>The ground beneath this site was seafloor. During the Late Cretaceous period, roughly 100 to 66 million years ago, the entire Grand Prairie corridor lay submerged beneath the Western Interior Seaway — a warm, subtropical inland ocean that split North America in half, connecting the Arctic to the Gulf of Mexico. Teeming with mosasaurs, plesiosaurs, and vast colonies of microscopic algae called coccolithophores — the same organisms that built the White Cliffs of Dover — those creatures died by the trillions, their calcium carbonate shells drifting to the seafloor and compressing over millennia into the hard white limestone formation now called the Austin Chalk.</Body>
+          <Body>This matters for the resort because the Austin Chalk is the reason the land has topography at all. The formation dips eastward at 15–40 feet per mile, and where its hard western edge meets the softer Eagle Ford Shale beneath it, differential erosion has carved a prominent bluff called the White Rock Escarpment — traceable for 350 miles from south of San Antonio through Dallas to Sherman. In the Mountain Creek Lake area, this escarpment produces approximately 100 feet of relief. The "mountain" in Mountain Creek almost certainly references this feature. It is the only reason elevation change exists in an otherwise flat landscape, and it is the single most important geological asset on the property.</Body>
+          <GoDeeper links={[
+            { label: "TxGIO LiDAR DataHub", url: "https://data.tnris.org" },
+            { label: "USGS 3DEP LidarExplorer", url: "https://apps.nationalmap.gov/lidar-explorer/" },
+          ]} />
+
+          <SubHead>Fifteen Thousand Years of Human Presence</SubHead>
+          <Body>Human habitation of this prairie corridor extends to pre-Clovis times, over 15,000 years ago. The archaeological record along the Trinity River is substantial: excavations near the Texas Horse Park in Dallas County unearthed nearly 3,000 prehistoric artifacts dating from 500 to 5,000 years old. The Caddo called the Trinity River "Arkikosa." La Salle, encountering it in 1687, named it the "River of Canoes" — indicating heavy Indigenous watercraft use. The Wichita, Tonkawa, Comanche, and Kiowa all moved through this corridor. By 1841, the Village Creek settlements housed an estimated 10,000 inhabitants across 225 lodges.</Body>
+          <Body>The Bird's Fort Treaty of 1843, signed roughly 20 miles from the present site, opened the prairie to Anglo settlement. The name "Grand Prairie" was already on maps decades before any town existed — a description of the vast, treeless grassland that stunned arrivals from the wooded East.</Body>
+          <GoDeeper links={[
+            { label: "Texas State Historical Association", url: "https://www.tshaonline.org/handbook/entries/grand-prairie-tx" },
+            { label: "Portal to Texas History", url: "https://texashistory.unt.edu" },
+          ]} />
+
+          <SubHead>From Broken Wagon to Mustang Factory</SubHead>
+          <Body>The city of Grand Prairie was founded in 1863 when Alexander McRae Dechman, hauling Confederate army supplies, broke his wagon on this stretch of prairie and traded his broken wagon and ox team for a 239-acre tract originally granted to the Caruth brothers in 1850.</Body>
+          <Body>The defining chapter came on September 28, 1940, when North American Aviation broke ground on a plant west of Hensley Field. The first fully air-conditioned, artificially lit aircraft production facility in the United States — 272 acres and 2.9 million square feet across 85 buildings. At peak production in April 1944, 38,500 employees working three shifts produced 728 aircraft in a single 30-day period — a U.S. production record never surpassed. Grand Prairie's population exploded from 1,595 in 1940 to 18,000 by 1945.</Body>
+          <Body>The lake itself — Mountain Creek Lake — was created by Dallas Power and Light in 1936–37 as a cooling reservoir for a steam-electric generating plant. The dam is a rolled-earth structure 8,200 feet long and 36 feet high. At full pool it covers 2,710 acres with an average depth of just 8.5 feet — a shallow, warm body of water shaped by everything from naval aviation to environmental remediation.</Body>
+          <GoDeeper links={[
+            { label: "Texas State Historical Association — Grand Prairie", url: "https://www.tshaonline.org/handbook/entries/grand-prairie-tx" },
+            { label: "Portal to Texas History", url: "https://texashistory.unt.edu" },
+          ]} />
+
+          <SubHead>The Name Question</SubHead>
+          <Body>The working name "Estes Park" is borrowed from one of the most famous mountain destinations in America — a Colorado gateway town at 7,522 feet elevation, surrounded by 14,000-foot peaks, home to Rocky Mountain National Park and the hotel that inspired The Shining. Applying this name to a lakeside golf resort on Texas prairie creates immediate brand confusion.</Body>
+          <Body>The great golf destinations named themselves from the land. Bandon Dunes describes sand dunes near the Oregon coast. Sand Valley names the prehistoric glacial dunes in central Wisconsin. The Fall Line references the geological escarpment between Georgia's Piedmont and Coastal Plain. The strongest names grow from something verifiably real about the site. This land offers: the White Rock Escarpment, Mountain Creek, the Austin Chalk, and the Cross Timbers. The name this project earns should be as honest and irreplaceable as the land itself.</Body>
+        </>}
+        right={<>
+          <PullQuote>"The escarpment produces approximately 100 feet of relief. It is the only reason elevation change exists in an otherwise flat landscape — and the single most important geological asset on the property."</PullQuote>
+          <div className="reveal reveal-delay-2" style={{
+            background: C.parchment, border: `1px solid ${C.rule}`,
+            padding: "20px 24px", marginBottom: 8,
+          }}>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em",
+              textTransform: "uppercase", color: C.sage, marginBottom: 14, fontWeight: 500,
+            }}>Naming Anchors</p>
+            {["White Rock Escarpment", "Mountain Creek", "Austin Chalk", "Cross Timbers", "Cuesta (Spanish for the ridgeline)"].map((name, i) => (
+              <p key={i} style={{
+                fontFamily: "'Lora', serif", fontSize: 14, lineHeight: 1.75, color: C.ink,
+                paddingLeft: 12, borderLeft: `2px solid ${C.rule}`, marginBottom: 10,
+              }}>{name}</p>
+            ))}
+          </div>
+          <StatCard stat="100M" label="Years of geology" sub="Cretaceous seabed → Austin Chalk escarpment" />
+          <StatCard stat="15,000" label="Years of human presence" sub="Pre-Clovis through present" />
+          <StatCard stat="728" label="Aircraft built in 30 days" sub="April 1944 — U.S. production record, never surpassed" />
+        </>}
+      />
+      <FeedbackPrompt
+        question="What does this place remind you of? What name would you give it if you had to explain it to someone who'd never been to Texas?"
+        onRespond={onRespond}
+      />
+    </SectionWrapper>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 3 — THE MARKET
+// ═══════════════════════════════════════════════════════════════════════════════
+function MarketSection({ onRespond }) {
+  const tableData = [
+    ["15 minutes", "~1.5–2.0M", "Arlington, Irving, Duncanville, DFW Airport corridor"],
+    ["30 minutes", "~4.5–5.5M", "Downtown Dallas, Fort Worth, Plano, Frisco, Southlake"],
+    ["45 minutes", "~7.0–8.0M", "Essentially the entire DFW Metroplex"],
+  ];
+  return (
+    <SectionWrapper id="market">
+      <SectionLabel number="03" label="The Market" />
+      <SectionH2>8.3 Million Reasons. And That's Just the Start.</SectionH2>
+      <SectionSub>The population case for why this site, at this moment, is historically significant.</SectionSub>
+      <Rule />
+      <TwoCol
+        left={<>
+          <SubHead>The Scale of the Opportunity</SubHead>
+          <Body>Grand Prairie sits at the geographic center of the largest population boom in modern American history. The DFW Metroplex added approximately 178,000 new residents in a single year (July 2023–July 2024) — equivalent to 487 people per day. At 8.34 million people, DFW's population now exceeds that of 38 U.S. states. If it were a state, it would rank 13th nationally — just behind Virginia, just ahead of Washington.</Body>
+          <Body>This growth is structural, not cyclical. DFW grew through three national recessions, the dot-com bust, the 2008 financial crisis, and the pandemic. Fueled by corporate relocation, no state income tax, and a diversified economy across tech, healthcare, finance, and logistics, the metro is on track to surpass Chicago as the nation's third-largest within the decade.</Body>
+          <p className="reveal" style={{ fontFamily: "'Lora', serif", fontSize: "clamp(15px, 1.6vw, 17px)", lineHeight: 1.92, color: C.ink, marginBottom: 28, fontWeight: 500, fontStyle: "italic" }}>The demand curves don't flatten here. They compound.</p>
+
+          <div className="reveal" style={{ margin: "8px 0 28px", overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "'DM Sans', sans-serif", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${C.sienna}` }}>
+                  {["Drive Ring", "Population", "Communities"].map(h => (
+                    <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.sage, fontWeight: 500 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((row, i) => (
+                  <tr key={i} style={{ borderBottom: `1px solid ${C.rule}`, background: i % 2 === 0 ? C.parchmentAlt : "transparent" }}>
+                    {row.map((cell, j) => (
+                      <td key={j} style={{ padding: "11px 14px", color: C.ink, fontWeight: j === 0 ? 600 : 400, fontSize: j === 2 ? 12 : 13 }}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <SubHead>The Texas Triangle Mega-Region</SubHead>
+          <Body>DFW anchors the northern vertex of the Texas Triangle — a megaregion encompassing Dallas–Fort Worth, Houston, San Antonio, and Austin that collectively houses approximately 70% of Texas's 30+ million residents and generates over 75% of the state's GDP. The Triangle is projected to grow to roughly 40 million people by 2040. More than 50 Fortune 500 companies are now headquartered within it. The Austin–San Antonio corridor (another ~5.2M people) is a 3–4 hour drive. Houston (7.7M) is within a day's drive. The addressable market isn't 8.3M. It's closer to 21M.</Body>
+          <GoDeeper links={[
+            { label: "NCTCOG Population Projections", url: "https://www.nctcog.org" },
+            { label: "Texas Demographic Center", url: "https://demographics.texas.gov" },
+          ]} />
+
+          <SubHead>The Wealth Corridor at the Door</SubHead>
+          <Body>Within 30–45 minutes of this site sits one of the most concentrated suburban wealth corridors in the nation: Southlake (median household income ~$250,000; average home value $1.29M), University Park (average household income ~$389,868; average home value $2.45M), Colleyville (~$203,566), Flower Mound (~$157,737). Six DFW suburbs rank among the fastest-growing wealthy communities in the entire country. This is the consumer who buys golf memberships, books luxury tee times, and spends on resort weekends — and they're all within 30 minutes.</Body>
+
+          <SubHead>Golf's Unprecedented Moment</SubHead>
+          <Body>48.1 million Americans played golf in 2025 — a record high. 21 million non-golfers said they were "very interested" in playing on a course — the deepest prospect pipeline in golf history. Texas ranks #2 nationally in total golf participation with 1.89 million on-course golfers. 241,000 new Texas golfers entered the market in 2023 alone — growing at 4.5% vs. 3.1% nationally. DFW has 12 Topgolf locations — 12 incubators feeding future golfers into the market.</Body>
+          <GoDeeper links={[
+            { label: "National Golf Foundation", url: "https://www.ngf.org" },
+            { label: "Golf Industry Report 2025", url: "https://www.ngf.org/golf-industry-research/" },
+          ]} />
+
+          <SubHead>PGA Frisco Already Proved It</SubHead>
+          <Body>The question isn't whether DFW can support a world-class golf resort. PGA Frisco already answered that — a $520M+ public-private partnership on 660 acres in Frisco, with the PGA of America headquarters, a 500-room Omni resort, two championship courses, and a projected $2.5 billion economic impact over 20 years. But the Omni is a convention hotel in golf clothing. What doesn't exist — anywhere in DFW, anywhere in Texas — is a boutique, walking-only, architecturally pure destination where the golf is the entire point. That gap is this project's open window.</Body>
+          <Body style={{ fontStyle: "italic", opacity: 0.75 }}>Compare: Estes Park | 1,200 acres | 15–30 min from DFW core | 8.3M people in drive market. Bandon Dunes | 5 courses | 4.5 hours from Portland | 2.5M people in drive market. The math isn't close.</Body>
+        </>}
+        right={<>
+          <StatCard stat="487" label="New residents per day" sub="DFW metro, July 2023–July 2024" />
+          <StatCard stat="8.3M" label="People in the metro" sub="Larger than 38 U.S. states" />
+          <StatCard stat="21M" label="Non-golfers ready to play" sub="Deepest prospect pipeline in golf history" />
+          <StatCard stat="$520M" label="PGA Frisco investment" sub="Proof of concept. The boutique gap remains empty." />
+          <PullQuote>"The demand curves don't flatten here. They compound."</PullQuote>
+          <div className="reveal reveal-delay-3" style={{ background: C.warmBlack, padding: "24px 24px" }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.sienna, marginBottom: 12, fontWeight: 600 }}>The Core Golf Consumer</p>
+            <p style={{ fontFamily: "'Lora', serif", fontSize: 30, fontWeight: 500, color: C.parchment, lineHeight: 1.1, marginBottom: 10 }}>400,000–600,000</p>
+            <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 13, color: "rgba(245,240,232,0.58)", lineHeight: 1.65 }}>Income-qualified, golf-interested households within 45 minutes. Conservatively.</p>
+          </div>
+        </>}
+      />
+      <FeedbackPrompt
+        question="What would make you drive 20 minutes to play golf here instead of 20 minutes to play at your club? What would justify the premium?"
+        onRespond={onRespond}
+      />
+    </SectionWrapper>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 4 — THE COMPS
+// ═══════════════════════════════════════════════════════════════════════════════
+const COMPS = [
+  {
+    num: "01", name: "Bandon Dunes", sub: "Bandon, Oregon · 1999 · 6 Courses",
+    callout: "Built 4.5 hours from Portland. Needed 12,000 rounds to break even. Got 24,000. This site is 20 minutes from 8.3 million people. The risk here is categorically different.",
+    teaches: [
+      "Walking-only with caddies is not a constraint — it's a premium positioning decision",
+      "A single great course that exceeds break-even by 2× in Year 1 generates enough cash flow to self-fund every subsequent phase",
+      "Community benefit (800+ jobs, $16.7M payroll, $740K+ in annual property taxes) is inseparable from the resort's long-term success",
+    ],
+    numbers: "~$99M est. annual revenue · 300+ rooms · 800+ employees · Largest private employer in Coos County",
+    links: [{ label: "Bandon Dunes Golf Resort", url: "https://www.bandondunesgolf.com" }, { label: "Oregon Encyclopedia", url: "https://www.oregonencyclopedia.org/articles/bandon_dunes_golf_resort/" }],
+  },
+  {
+    num: "02", name: "Pinehurst", sub: "Pinehurst, North Carolina · 1895 · 10+ Courses",
+    callout: "$1.25 an acre for deforested land in 1895. One architect who never left. 130 years of compounding mythology. The $1/year lease on this site is the same story, a different century.",
+    teaches: [
+      "Village-first, golf-second — a walkable community where the course is the village green, not an isolated compound",
+      "Distributed lodging across inns and cottages creates intimacy at scale",
+      "Long-term stewardship by a single design voice builds irreplaceable architectural character that cannot be manufactured",
+    ],
+    numbers: "U.S. Opens scheduled through 2047 · National Historic Landmark · 'Home of American Golf' · $2B+ estimated economic impact to North Carolina",
+    links: [{ label: "Village of Pinehurst", url: "https://www.villageofpinehurst.com" }, { label: "USGA Golf House Pinehurst", url: "https://www.usga.org/content/usga/home-page/usga-golf-house-pinehurst.html" }],
+  },
+  {
+    num: "03", name: "Kohler / Whistling Straits", sub: "Kohler, Wisconsin · 1998 · 4 Courses",
+    callout: "800,000 cubic yards of imported sand on a flat Army airfield. Before Kohler, Wisconsin hadn't hosted a men's major in 71 years. The 2021 Ryder Cup alone generated $135M in economic impact. The land doesn't have to be dramatic — the architecture does.",
+    teaches: [
+      "The most transformative sites often look like liabilities before the architect arrives",
+      "Campus lodging (The American Club as the anchor hotel + distributed cottage facilities) is the programming model Escalante already uses at its best properties",
+      "Brand architecture as design philosophy — every building, every hole, every detail reinforces the same story",
+    ],
+    numbers: "PGA Championships (2004, 2010, 2015) · 2021 Ryder Cup: $135M economic impact",
+    links: [{ label: "Destination Kohler", url: "https://www.destinationkohler.com" }],
+  },
+  {
+    num: "04", name: "Streamsong", sub: "Bowling Green, Florida · 2012 · 4 Courses",
+    callout: "Industrial waste land that looks like Scotland. 90 minutes from Tampa in the Florida hinterlands. 90,000 rounds a year. Streamsong didn't apologize for its land — it made the land the point. This site has better bones than Streamsong ever did.",
+    teaches: [
+      "Terrain character matters more than terrain pedigree — the story of the land is more important than the land's conventional attractiveness",
+      "Multi-architect strategy generates multiple reasons to visit and multiple audiences to serve",
+      "Cautionary tale: inconsistent architectural character across phases weakens long-term brand identity — a master plan committed to a single design vocabulary protects it",
+    ],
+    numbers: "Sold 2023 for $160M · 7,000 acres with expansion potential · 4th course (The Chain) opened 2024",
+    links: [{ label: "Streamsong Resort", url: "https://www.streamsongresort.com" }, { label: "Golf Digest", url: "https://www.golfdigest.com" }],
+  },
+  {
+    num: "05", name: "Sand Valley", sub: "Nekoosa, Wisconsin · 2017 · 4 Courses",
+    callout: "Sold out its first season. Three hours from any major city. Sand Valley proves the model scales — but with 8.3M people within 30 minutes, the demand math here is fundamentally better from day one.",
+    teaches: [
+      "Founding member model (160 members × $50K = $8M pre-opening) creates committed ambassadors, not just revenue",
+      "Phase 1 discipline — one great course done perfectly — builds conviction for Phase 2 faster than an overbuilt Phase 1",
+      "Five-month golf season serving a 680K metro catchment. Estes Park has year-round playability and 8.3M people within 30 minutes.",
+    ],
+    numbers: "160 founding members × $50,000 = $8M pre-opening capital · Year-round season advantage over Midwest comps",
+    links: [{ label: "Sand Valley Golf Resort", url: "https://www.sandvalleygolfresort.com" }, { label: "Fried Egg Golf", url: "https://www.friedegggolf.com" }],
+  },
+  {
+    num: "06", name: "PGA Frisco / Fields Ranch", sub: "Frisco, Texas · 2023 · 2+ Courses",
+    callout: "$520M proves DFW supports destination golf at massive scale. The Omni is a convention hotel in golf clothing. The boutique segment — walking-only, architecturally pure, intimate — is completely empty. PGA Frisco is not the competition. It's the proof of concept.",
+    teaches: [
+      "DFW's public-private partnership appetite is proven and sophisticated (TIRZ, Chapter 380, state HOT rebates, direct city investment — all executed at this scale)",
+      "Fields Ranch East's walking-only Gil Hanse course has been the most critically acclaimed element of the development — buried inside a corporate mega-resort complex",
+      "Adjacent Fields master plan ($10–12.7B projected buildout) demonstrates the catalytic effect of destination golf on surrounding land values",
+    ],
+    numbers: "$520M total investment · $2.5B projected 20-year economic impact · 23 PGA championships committed · Adjacent Fields master plan: $10–12.7B projected buildout",
+    links: [{ label: "PGA Frisco", url: "https://www.pgafrisco.com" }, { label: "City of Frisco EDC", url: "https://www.friscoedc.com" }],
+  },
+  {
+    num: "07", name: "Cabot Cape Breton", sub: "Inverness, Nova Scotia · 2012 · 3 Courses",
+    callout: "Reversed a generation of out-migration from a dead coal town. 500 jobs created. Cottages that sold for $10,000 now fetch $150,000+. The best precedent for what destination golf does to a community that has been written off. Grand Prairie hasn't been written off — but it's been overlooked. The difference matters.",
+    teaches: [
+      "Community transformation as explicit mission, not byproduct — the inverse of the Bandon model",
+      "Cottage resale appreciation is a community wealth creation mechanism that local elected officials can point to as direct constituent benefit",
+      "Workforce development and youth employment programs transform a resort from 'luxury imposition' to 'community institution' — critical for Grand Prairie's diverse, working-class constituency",
+    ],
+    numbers: "500+ jobs · Canada's Meritorious Service Medal for community revitalization · Cottage values: $10,000 → $150,000+",
+    links: [{ label: "Cabot Golf", url: "https://www.cabotgolf.com" }, { label: "Cape Breton Spectator", url: "https://capebretonspectator.com" }],
+  },
+  {
+    num: "08", name: "Wild Spring Dunes", sub: "Mt. Enterprise, Texas · Opening Fall 2026",
+    callout: "The Keiser family's general manager said it himself: 'With all due respect, I don't think Texas has a really great golf resort yet.' He's building one. 175 miles from Dallas. This site is 20 minutes from Dallas. The category he's proving exists — we're building it at the center of the market, not the edge.",
+    teaches: [
+      "Wild Spring Dunes serves the dedicated golf pilgrim who will drive 3 hours for an extraordinary experience — this project serves everyone else",
+      "The markets are more complementary than competitive: Wild Spring builds the mythology that makes DFW golfers want a world-class destination; this project is that destination, accessible every weekend",
+      "Pre-opening capital model (deposits at $65K–$115K) validates the founding member pricing architecture for this project",
+    ],
+    numbers: "Founding member deposits: $65,000 → $115,000 (sold out escalating tranches)",
+    links: [{ label: "Wild Spring Dunes", url: "https://www.wildspringdunes.com" }, { label: "The Golf Travel Guru", url: "https://www.golfpassport.com" }],
+  },
+];
+
+function CompCard({ comp }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="reveal" style={{
+      borderLeft: `3px solid ${C.sienna}`,
+      marginBottom: 4,
+      background: C.parchment,
+      overflow: "hidden",
+      boxShadow: "2px 2px 8px rgba(0,0,0,0.06)",
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          width: "100%", textAlign: "left", background: "none", border: "none",
+          padding: "22px 28px", cursor: "pointer",
+          display: "flex", alignItems: "flex-start", gap: 18,
+        }}
+      >
+        <span style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.12em",
+          color: C.sienna, fontWeight: 600, flexShrink: 0, marginTop: 5,
+        }}>→ {comp.num}</span>
+        <div style={{ flex: 1 }}>
+          <p style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(17px, 2.2vw, 23px)",
+            fontWeight: 500, fontStyle: "italic",
+            color: C.ink, marginBottom: 4,
+            fontVariantLigatures: "common-ligatures",
+          }}>{comp.name}</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.1em", color: C.sage, textTransform: "uppercase" }}>{comp.sub}</p>
+        </div>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: C.sienna, flexShrink: 0, marginTop: 2 }}>{open ? "−" : "+"}</span>
+      </button>
+
+      {/* Folder-open content — max-height transition */}
+      <div style={{
+        maxHeight: open ? "2000px" : "0",
+        overflow: "hidden",
+        transition: "max-height 0.25s ease",
+        background: C.compOpen,
+      }}>
+        <div className="comp-open-content" style={{ padding: "0 28px 28px 66px" }}>
+          <blockquote style={{
+            fontFamily: "'Playfair Display', serif", fontStyle: "italic",
+            fontSize: "clamp(14px, 1.8vw, 18px)", lineHeight: 1.68,
+            color: C.warmBrown, borderTop: `1px solid ${C.rule}`,
+            paddingTop: 20, marginBottom: 20,
+            fontVariantLigatures: "common-ligatures",
+          }}>
+            "{comp.callout}"
+          </blockquote>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.sage, marginBottom: 12, fontWeight: 500 }}>What It Teaches</p>
+          <ul style={{ paddingLeft: 0, listStyle: "none", marginBottom: 20 }}>
+            {comp.teaches.map((t, i) => (
+              <li key={i} style={{
+                fontFamily: "'Lora', serif", fontSize: 14, lineHeight: 1.8,
+                color: C.ink, paddingLeft: 14, borderLeft: `2px solid ${C.rule}`, marginBottom: 10,
+              }}>{t}</li>
+            ))}
+          </ul>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(28,28,26,0.55)", marginBottom: 14, lineHeight: 1.6 }}>{comp.numbers}</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}>
+            {comp.links.map((l, i) => (
+              <span key={i}>
+                <a href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: C.sienna }}>{l.label}</a>
+                {i < comp.links.length - 1 ? " · " : ""}
+              </span>
+            ))}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompsSection({ onRespond }) {
+  return (
+    <SectionWrapper id="comps" alt>
+      <SectionLabel number="04" label="The Comps" />
+      <SectionH2>It's Been Done Before. Just Never Here.</SectionH2>
+      <SectionSub>Eight precedents that prove what's possible — and what each one teaches this project.</SectionSub>
+      <Rule />
+      <Body>The great golf destinations weren't acts of faith. They were acts of studied conviction — developers and architects who looked at what had worked elsewhere, understood exactly why it worked, and built something rooted in those principles but honest to their own land.</Body>
+      <Body>What follows are the eight most relevant precedents for this project. Not for imitation. For ammunition.</Body>
+      <div style={{ marginTop: 36 }}>
+        {COMPS.map(c => <CompCard key={c.num} comp={c} />)}
+      </div>
+      <FeedbackPrompt
+        question="Which of these precedents resonates most with what you want this project to become? What does this site have that none of them had?"
+        onRespond={onRespond}
+      />
+    </SectionWrapper>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 5 — THE TEAM
+// ═══════════════════════════════════════════════════════════════════════════════
+const TEAM = [
+  {
+    name: "Randy Hoffacker", role: "Master Planner", org: "Work Architecture",
+    bio: "Randy Hoffacker is the spatial architect of this vision — the person who translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a prior working history with Escalante Golf properties, Randy brought the first site read that set the tone for everything: 'I want you to feel lost out there.' His background in construction management means he doesn't just design programs — he designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
+  },
+  {
+    name: "David McDonald", role: "President", org: "Escalante Golf",
+    bio: "David McDonald has built Escalante into the most distinctive boutique golf operator in America — 25 properties across 17 states, from ultra-exclusive Canyata (Top 100 World, ~$1M entry) to walking-only Kingsley Club in Michigan to the 350-room Kingsmill Resort in Virginia. He walked away from a $100M golf project in Aledo, Texas in January 2024 rather than compromise on operational control and brand authority. Estes Park is his second attempt at the DFW flagship he's always needed. He needs confidence that this team and this city can deliver the project his name goes on.",
+    link: { label: "escalantegolf.com", url: "https://www.escalantegolf.com" },
+  },
+  {
+    name: "OCM Golf", role: "Golf Course Architects / Design-Build", org: "Ogilvy · Cocking · Mead",
+    bio: "OCM Golf is the only firm in golf architecture that designs, builds, and maintains its own work — from first concept sketch through construction, grow-in, and agronomic consultation. Geoff Ogilvy (2006 US Open Champion at Winged Foot) grew up on Melbourne's Sandbelt courses and has said plainly: 'We don't like punitive stuff. The great courses bring the 18-handicapper and the scratch golfer closer together.' Their first U.S. project was Shady Oaks in Fort Worth. Their Luling Sport course will be their first walking-only project in the state — a direct precedent for this work.",
+    link: { label: "ocm.golf", url: "https://www.ocm.golf" },
+  },
+  {
+    name: "Mayor Ron Jensen", role: "Mayor", org: "City of Grand Prairie",
+    bio: "Ron Jensen has been Grand Prairie's mayor since 2013 — five terms — executing a single clear vision: transforming Grand Prairie from a pass-through suburb into a destination city. His track record: $165M+ in the EpicCentral entertainment district, the Goodland annexation (1,500+ acres, 50,000 projected residents), Major League Cricket headquarters relocation from San Francisco, and a $327M general obligation bond on the May 2026 ballot. Grand Prairie holds an AAA S&P bond rating and ranked #2 nationally in permitting efficiency in 2025. He will champion this project — but needs it framed as community benefit for a diverse, working-class constituency.",
+    link: { label: "gptx.org", url: "https://www.gptx.org" },
+  },
+];
+
+function TeamSection({ onRespond }) {
+  return (
+    <SectionWrapper id="team">
+      <SectionLabel number="05" label="The Team" />
+      <SectionH2>The People Who Make This Real</SectionH2>
+      <SectionSub>Each person in this room brings something no one else can. This is who they are.</SectionSub>
+      <Rule />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 3 }}>
+        {TEAM.map((member, i) => (
+          <div key={i} className="reveal" style={{
+            background: i % 2 === 0 ? C.parchment : C.parchmentAlt,
+            padding: "28px 28px 24px",
+            borderTop: `3px solid ${i === 0 ? C.sienna : C.rule}`,
+          }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.sage, marginBottom: 10, fontWeight: 500 }}>{member.role}</p>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 500, color: C.ink, marginBottom: 4, fontVariantLigatures: "common-ligatures" }}>{member.name}</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna, marginBottom: 18, letterSpacing: "0.04em" }}>{member.org}</p>
+            <p style={{ fontFamily: "'Lora', serif", fontSize: 14, lineHeight: 1.92, color: C.ink }}>{member.bio}</p>
+            {member.link && (
+              <p style={{ marginTop: 16 }}>
+                <a href={member.link.url} target="_blank" rel="noopener noreferrer"
+                  style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna }}>
+                  {member.link.label} →
+                </a>
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+      <FeedbackPrompt
+        question="Who else belongs at this table? What expertise or perspective is missing from this team that would make the project stronger?"
+        onRespond={onRespond}
+      />
+    </SectionWrapper>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 6 — THE LOOP
+// ═══════════════════════════════════════════════════════════════════════════════
+function LoopSection() {
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "", section: "The Story", response: "", attribution: "yes",
+  });
+
+  const prompts = [
+    { section: "The Story",    q: "What does 'leaving something indelible' mean for a project on this specific piece of ground?" },
+    { section: "The Place",    q: "What name belongs here — one that could only be this place?" },
+    { section: "The Market",   q: "What justifies the premium beyond the course itself?" },
+    { section: "The Comps",    q: "What does this site have that none of the comps had?" },
+    { section: "The Team",     q: "Who else belongs at this table?" },
+    { section: "Something Else", q: "If you left this portal with one thought not captured above, this is where it goes." },
+  ];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch("https://formspree.io/f/YOUR_FORMSPREE_ENDPOINT", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      });
+    } catch (_) {}
+    setSubmitted(true);
+  };
+
+  const field = {
+    width: "100%", padding: "12px 14px",
+    background: "#2A2420",
+    border: "1px solid rgba(248,240,225,0.14)",
+    fontFamily: "'Lora', serif", fontSize: 15,
+    color: "rgba(245,240,232,0.82)",
+    outline: "none", borderRadius: 0,
+  };
+
+  const labelStyle = {
+    fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.14em",
+    textTransform: "uppercase", color: "rgba(245,240,232,0.42)",
+    display: "block", marginBottom: 8, fontWeight: 500,
+  };
+
+  return (
+    <section id="loop" style={{
+      position: "relative", zIndex: 1,
+      padding: "88px 24px",
+      background: C.warmBlack,
+    }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <SectionLabel number="06" label="The Loop" dark />
+
+        {/* Largest type on the page — closing statement */}
+        <h2 className="reveal" style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: "clamp(30px, 5vw, 66px)",
+          fontWeight: 400, lineHeight: 1.16, marginBottom: 8, maxWidth: 820,
+          color: C.parchment, fontVariantLigatures: "common-ligatures",
+        }}>
+          This Document Isn't Finished.<br />Neither Is the Vision.
+        </h2>
+        <p className="reveal reveal-delay-1" style={{
+          fontFamily: "'Lora', serif", fontStyle: "italic",
+          fontSize: "clamp(15px, 1.9vw, 20px)",
+          color: "rgba(245,240,232,0.45)", marginBottom: 40, lineHeight: 1.55,
+        }}>
+          The best intelligence in this project will come from the people in the room.
+        </p>
+        <Rule dark />
+        <TwoCol
+          left={<>
+            <Body dark>Everything you've read here was assembled from public records, site data, market research, and the conversations that have already happened about this place. It is as complete as one team can make it.</Body>
+            <Body dark>But it is not finished.</Body>
+            <Body dark>The next version of this document will reflect what you think. What you know that isn't here. What precedent we missed. What question we haven't asked yet. What moment from your own career — your own experience of watching a place become something extraordinary — changes the way this project should be told.</Body>
+            <Body dark>Not a survey. Not a contact form. A genuine request for the intelligence that only you can provide.</Body>
+            <Body dark>When you send a response here, it routes directly to the project team. Every submission is reviewed. The best intelligence gets incorporated into the next version of this portal. You'll see it reflected back in the research, the arguments, the questions this project asks of the city, the architects, and itself. The portal gets smarter because you engage with it. That's the design.</Body>
+
+            {submitted ? (
+              <div className="reveal" style={{
+                padding: "40px", marginTop: 36, textAlign: "center",
+                border: `1px solid rgba(181,84,27,0.35)`,
+              }}>
+                <p style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(20px, 2.5vw, 28px)",
+                  color: C.parchment, marginBottom: 12,
+                  fontVariantLigatures: "common-ligatures",
+                }}>
+                  Your thinking is now part of the project.
+                </p>
+                <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 15, color: "rgba(245,240,232,0.45)" }}>Thank you.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ marginTop: 36 }}>
+                <div style={{ marginBottom: 24 }}>
+                  <label style={labelStyle}>Your name (optional)</label>
+                  <input
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    style={field} placeholder="Name"
+                  />
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <label style={labelStyle}>Which section are you responding to?</label>
+                  <select
+                    value={formData.section}
+                    onChange={e => setFormData({ ...formData, section: e.target.value })}
+                    style={{ ...field, cursor: "pointer" }}
+                  >
+                    {prompts.map(p => <option key={p.section} value={p.section}>{p.section}</option>)}
+                  </select>
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <label style={labelStyle}>Your thinking</label>
+                  <textarea
+                    value={formData.response}
+                    onChange={e => setFormData({ ...formData, response: e.target.value })}
+                    rows={7} required
+                    style={{ ...field, resize: "vertical", lineHeight: 1.78 }}
+                    placeholder="What do you know that isn't here yet..."
+                  />
+                </div>
+                <div style={{ marginBottom: 32 }}>
+                  <label style={labelStyle}>May we quote you?</label>
+                  <select
+                    value={formData.attribution}
+                    onChange={e => setFormData({ ...formData, attribution: e.target.value })}
+                    style={{ ...field, cursor: "pointer" }}
+                  >
+                    <option value="yes">Yes, you may quote me</option>
+                    <option value="anonymous">Quote me anonymously</option>
+                    <option value="no">Don't quote me</option>
+                  </select>
+                </div>
+                <button type="submit" style={{
+                  width: "100%", padding: "20px",
+                  background: C.sienna, border: "none",
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 13,
+                  letterSpacing: "0.16em", textTransform: "uppercase",
+                  fontWeight: 600, color: C.parchment, cursor: "pointer",
+                  transition: "opacity 0.2s",
+                }}
+                  onMouseEnter={e => e.target.style.opacity = 0.85}
+                  onMouseLeave={e => e.target.style.opacity = 1}
+                >
+                  Send to the project team →
+                </button>
+              </form>
+            )}
+          </>}
+          right={<>
+            <div className="reveal reveal-delay-2" style={{
+              border: "1px solid rgba(245,240,232,0.1)", padding: "24px",
+            }}>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em",
+                textTransform: "uppercase", color: "rgba(245,240,232,0.35)",
+                marginBottom: 20, fontWeight: 500,
+              }}>Questions worth answering</p>
+              {prompts.map((p, i) => (
+                <div key={i} style={{
+                  marginBottom: 20, paddingBottom: 20,
+                  borderBottom: i < prompts.length - 1 ? "1px solid rgba(245,240,232,0.07)" : "none",
+                }}>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: C.sienna, marginBottom: 8, fontWeight: 600 }}>{p.section}</p>
+                  <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 14, lineHeight: 1.68, color: "rgba(245,240,232,0.6)" }}>{p.q}</p>
+                </div>
+              ))}
+            </div>
+          </>}
+        />
+      </div>
+    </section>
+  );
+}
+
+// ─── FOOTER ──────────────────────────────────────────────────────────────────
+function Footer() {
+  return (
+    <footer style={{
+      background: C.warmBlack, padding: "40px 24px",
+      borderTop: "1px solid rgba(245,240,232,0.06)",
+      position: "relative", zIndex: 1,
+    }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, marginBottom: 20 }}>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: C.parchment, fontWeight: 400, fontVariantLigatures: "common-ligatures" }}>Estes Park</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: "rgba(245,240,232,0.28)", textTransform: "uppercase" }}>Work Architecture · Version 1.0 · March 2026</p>
+          <a href="mailto:ericwhitmore@gmail.com" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna, letterSpacing: "0.04em" }}>ericwhitmore@gmail.com</a>
+        </div>
+        <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 12, color: "rgba(245,240,232,0.22)", lineHeight: 1.75 }}>
+          This portal was built by Work Architecture as a living intelligence document for the Estes Park design charrette, March 31 – April 2, 2026. It will be updated as the project evolves. Version 1.0.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// APP ROOT
+// ═══════════════════════════════════════════════════════════════════════════════
+export default function App() {
+  const [activeSection, setActiveSection] = useState("story");
+
+  useScrollReveal();
+
+  useEffect(() => {
+    const sections = ["story", "place", "market", "comps", "team", "loop"];
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); }),
+      { threshold: 0.25 }
+    );
+    sections.forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
+
+  const scrollToLoop = () => document.getElementById("loop")?.scrollIntoView({ behavior: "smooth" });
+
+  return (
+    <>
+      <style>{globalStyles}</style>
+      <div className="grain" />
+      <Nav active={activeSection} />
+      <Hero />
+      <StorySection  onRespond={scrollToLoop} />
+      <PlaceSection  onRespond={scrollToLoop} />
+      <MarketSection onRespond={scrollToLoop} />
+      <CompsSection  onRespond={scrollToLoop} />
+      <TeamSection   onRespond={scrollToLoop} />
+      <LoopSection />
+      <Footer />
+    </>
+  );
+}
