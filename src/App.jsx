@@ -95,13 +95,33 @@ const globalStyles = `
 // ─── SCROLL REVEAL HOOK ──────────────────────────────────────────────────────
 function useScrollReveal() {
   useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("revealed"); }),
-      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
+    const apply = () => {
+      const els = document.querySelectorAll(".reveal");
+      const obs = new IntersectionObserver(
+        (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("revealed"); }),
+        { threshold: 0.04, rootMargin: "0px 0px -20px 0px" }
+      );
+      els.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        // Already visible on load — reveal immediately, no observer needed
+        if (rect.top < window.innerHeight && rect.bottom >= 0) {
+          el.classList.add("revealed");
+        } else {
+          obs.observe(el);
+        }
+      });
+      return obs;
+    };
+    // Run after first paint so all elements are mounted
+    const raf = requestAnimationFrame(() => {
+      const obs = apply();
+      // Clean up stored so we can disconnect on unmount
+      (window).__epObs = obs;
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      if (window.__epObs) window.__epObs.disconnect();
+    };
   }, []);
 }
 
@@ -122,7 +142,8 @@ function Nav({ active }) {
     { id: "market", label: "The Market" },
     { id: "comps",  label: "The Comps"  },
     { id: "team",   label: "The Team"   },
-    { id: "loop",   label: "The Field"  },
+    { id: "library", label: "The Library" },
+    { id: "loop",    label: "The Field"  },
   ];
 
   return (
@@ -211,10 +232,10 @@ function Hero() {
       {/* Hero photo layer — Mountain Creek Lake feel */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: "url(/joe-pool-lake.jpg)",
+        backgroundImage: "url(/sand-valley-clubhouse.jpg)",
         backgroundSize: "cover",
-        backgroundPosition: "center 35%",
-        filter: "sepia(10%) contrast(94%) brightness(78%)",
+        backgroundPosition: "center 45%",
+        filter: "sepia(8%) contrast(96%) brightness(72%)",
         transform: `translateY(${scrollY * 0.35}px)`,
         willChange: "transform",
       }} />
@@ -253,7 +274,7 @@ function Hero() {
           fontWeight: 400, color: C.parchment, lineHeight: 1.22, marginBottom: 28,
           letterSpacing: "-0.01em", fontVariantLigatures: "common-ligatures",
         }}>
-          What does a place owe the people who will never know it existed?
+          The Land Is Ready. The City Is Ready. Now We Decide.
         </h1>
 
         {/* 60px sienna rule */}
@@ -264,8 +285,8 @@ function Hero() {
           fontSize: "clamp(14px, 1.8vw, 19px)",
           color: "rgba(245,240,232,0.58)", lineHeight: 1.8, marginBottom: 52,
         }}>
-          100 million years of geology. 15,000 years of human presence.<br />
-          One story no one has told.
+          Grand Prairie, Texas. 1,200 acres on Joe Pool Lake.<br />
+          One window to make something permanent.
         </p>
 
         <a href="#story" style={{
@@ -555,7 +576,7 @@ function StorySection({ onRespond }) {
           ]} />
         </>}
         right={<>
-          <SectionImage src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=85" position="center 30%" />
+          <SectionImage src="/texas-saddle-windmill.jpg" position="center 40%" />
           <PullQuote>"The land has been a seabed, a prairie, a hunting ground, a battlefield, a cotton farm, a Mustang factory, and a Navy base. What it has never been is a place where people come to walk quietly through native grass and feel the particular silence that exists when a city of 8 million is 20 miles away but invisible."</PullQuote>
           <StatCard stat="1,200" label="Acres" sub="Nearly double PGA Frisco's footprint" />
           <StatCard stat="20 min" label="From DFW International Airport" sub="The closest world-class golf destination to any major U.S. metro" />
@@ -611,7 +632,17 @@ function PlaceSection({ onRespond }) {
           <Body>The great golf destinations named themselves from the land. Bandon Dunes describes sand dunes near the Oregon coast. Sand Valley names the prehistoric glacial dunes in central Wisconsin. The Fall Line references the geological escarpment between Georgia's Piedmont and Coastal Plain. The strongest names grow from something verifiably real about the site. This land offers: the White Rock Escarpment, Mountain Creek, the Austin Chalk, and the Cross Timbers. The name this project earns should be as honest and irreplaceable as the land itself.</Body>
         </>}
         right={<>
-          <SectionImage src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=1200&q=85" position="center 60%" />
+          <div className="reveal reveal-delay-1" style={{
+            width: "100%", marginBottom: 24,
+          }}>
+            <img src="/estes-park-program.png" alt="Estes Park Site Analysis — Opportunity Diagram"
+              style={{ width: "100%", display: "block", border: `1px solid ${C.rule}` }} />
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontSize: 10,
+              letterSpacing: "0.12em", textTransform: "uppercase",
+              color: C.sage, marginTop: 8, fontWeight: 500,
+            }}>Site Analysis — Opportunity Diagram</p>
+          </div>
           <PullQuote>"The escarpment produces approximately 100 feet of relief. It is the only reason elevation change exists in an otherwise flat landscape. It is the single most important geological asset on the property."</PullQuote>
           <div className="reveal reveal-delay-2" style={{
             background: C.parchment, border: `1px solid ${C.rule}`,
@@ -706,7 +737,7 @@ function MarketSection({ onRespond }) {
           <Body style={{ fontStyle: "italic", opacity: 0.75 }}>Compare: Estes Park | 1,200 acres | 15–30 min from DFW core | 8.3M people in drive market. Bandon Dunes | 5 courses | 4.5 hours from Portland | 2.5M people in drive market. The math isn't close.</Body>
         </>}
         right={<>
-          <SectionImage src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=85" position="center 40%" />
+          <SectionImage src="/live-oak-tunnel.jpg" position="center 50%" />
           <StatCard stat="487" label="New residents per day" sub="DFW metro, July 2023–July 2024" />
           <StatCard stat="8.3M" label="People in the metro" sub="Larger than 38 U.S. states" />
           <StatCard stat="21M" label="Non-golfers ready to play" sub="Deepest prospect pipeline in golf history" />
@@ -922,18 +953,23 @@ function CompsSection({ onRespond }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 const TEAM = [
   {
-    name: "Randy Hoffacker", role: "Master Planner", org: "Work Architecture",
-    bio: "Randy Hoffacker is the spatial architect of this vision. He translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a prior working history with Escalante Golf properties, his first site read set the direction: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. His background in construction management means he doesn't just design programs. He designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
-  },
-  {
     name: "David McDonald", role: "President", org: "Escalante Golf",
     bio: "David McDonald has built Escalante into the most distinctive boutique golf operator in America, 25 properties across 17 states. From ultra-exclusive Canyata, a Top 100 World property approaching $1 million in entry, to walking-only Kingsley Club in Michigan, to the 350-room Kingsmill Resort in Virginia. He walked away from a $100M golf project in Aledo, Texas in January 2024 rather than compromise on operational control and brand authority. Estes Park is his second attempt at the DFW flagship he's always needed. He needs confidence that this team and this city can deliver the project his name goes on.",
     link: { label: "escalantegolf.com", url: "https://www.escalantegolf.com" },
   },
   {
+    name: "Work Architecture", role: "Planning + Strategy Lead", org: "Work Architecture",
+    bio: "Work Architecture is the strategic and planning intelligence layer for this project. Founded by Eric Whitmore, Work Architecture exists to help cities and developers see exactly what a project could be before they spend a dime figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision. No firm in DFW has taken a project from concept to charrette faster. That speed is a feature, not a shortcut.",
+    link: { label: "workad.org", url: "https://www.workad.org" },
+  },
+  {
     name: "OCM Golf", role: "Golf Course Architects / Design-Build", org: "Ogilvy · Cocking · Mead",
     bio: "OCM Golf is the only firm in golf architecture that designs, builds, and maintains its own work, from first concept sketch through construction, grow-in, and agronomic consultation. Geoff Ogilvy (2006 US Open Champion at Winged Foot) grew up on Melbourne's Sandbelt courses, where golf rewards creativity and punishes nothing. The philosophy runs through every OCM design: architecture that closes the gap between the scratch player and the 18-handicapper rather than widen it. Their first U.S. project was Shady Oaks in Fort Worth. Their Luling Sport course will be their first walking-only project in the state. A direct precedent for this work.",
     link: { label: "ocm.golf", url: "https://www.ocm.golf" },
+  },
+  {
+    name: "Randy Hoffacker", role: "Master Planner", org: "Work Architecture",
+    bio: "Randy Hoffacker is the spatial architect of this vision. He translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a prior working history with Escalante Golf properties, his first site read set the direction: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. His background in construction management means he doesn't just design programs. He designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
   },
   {
     name: "Mayor Ron Jensen", role: "Mayor", org: "City of Grand Prairie",
@@ -980,7 +1016,196 @@ function TeamSection({ onRespond }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SECTION 6 — THE LOOP
+// SECTION 6 — THE LIBRARY
+// ═══════════════════════════════════════════════════════════════════════════════
+const LIBRARY = [
+  {
+    type: "Case Study",
+    title: "Bandon Dunes",
+    sub: "Strategic Intelligence Brief",
+    desc: "The foundational case study for destination golf in an unlikely location. Documents the phased capital model, walking-only positioning decision, and community benefit framework that transformed a dying Oregon fishing town into golf's most storied destination. The risk-adjusted comparison to Estes Park's 8.3M-person market is central to this project's financial argument.",
+    file: "/case-study-bandon-dunes.docx",
+  },
+  {
+    type: "Case Study",
+    title: "Pinehurst",
+    sub: "Golf Resort Case Study",
+    desc: "130 years of compounding mythology, traced from $1.25-per-acre deforested land to National Historic Landmark. Examines village-first design philosophy, distributed lodging model, and the long-term stewardship strategy that has produced U.S. Opens booked through 2047. The long-game argument for why design vision compounds over decades.",
+    file: "/case-study-pinehurst.docx",
+  },
+  {
+    type: "Case Study",
+    title: "Pebble Beach",
+    sub: "Strategic Intelligence for a Texas Lakeside Resort",
+    desc: "Custom brief applying Pebble Beach's coastline-as-defining-asset model to Estes Park's lakefront site. Examines how a water-adjacent setting creates irreplaceable views, photographic identity, and membership premium. Mountain Creek Lake is this project's Pacific Ocean — the borrowed view that no competitor can replicate.",
+    file: "/case-study-pebble-beach.docx",
+  },
+  {
+    type: "Case Study",
+    title: "Old Shores",
+    sub: "Case Study Brief",
+    desc: "Deep dive on a lesser-known but highly instructive resort development case. Examines how a regional market, committed ownership, and a single-architect identity created a destination with outsized influence relative to its size. Directly applicable to the boutique-first, expand-later model proposed for this site.",
+    file: "/case-study-old-shores.docx",
+  },
+  {
+    type: "Report",
+    title: "Golf Destination Deep Dive",
+    sub: "Market Intelligence Report",
+    desc: "Comprehensive analysis of the modern destination golf market: demand drivers, price point architecture, membership model variants, and the pipeline of upcoming supply. Positions Estes Park within the national landscape and identifies the specific market gap — walking-only, architecturally pure, Texas-authentic — that no current or announced development occupies.",
+    file: "/report-golf-destination-deep-dive.docx",
+  },
+  {
+    type: "Report",
+    title: "Competitive Intelligence Brief",
+    sub: "Golf Resort Competitive Analysis",
+    desc: "Head-to-head analysis of every relevant competitor in the DFW and Texas market, including announced projects, pricing, programming, and operator affiliations. Documents the white space this project occupies and the specific differentiators that insulate it from competitive pressure. Required reading before any conversation about market positioning.",
+    file: "/report-competitive-intelligence.docx",
+  },
+  {
+    type: "Report",
+    title: "Golf Resort Case Study Brief",
+    sub: "Structural Intelligence Report",
+    desc: "Examines the structural components shared by every successful destination golf resort — capital stack, phasing discipline, programming architecture, operator selection criteria, and community benefit frameworks. Functions as the operating manual for how great projects get built. Every recommendation in this portal traces back to principles documented here.",
+    file: "/report-golf-resort-case-study.docx",
+  },
+  {
+    type: "Research",
+    title: "The Joe Pool Lake Area in Grand Prairie",
+    sub: "Site History and Context Research",
+    desc: "Primary research document tracing the complete history of the Joe Pool Lake corridor — geological formation, Indigenous habitation, Spanish land grants, Confederate-era founding, North American Aviation's WWII production record, and Mountain Creek Lake's creation as a power plant cooling reservoir. The intelligence behind the 'The Place' section of this portal.",
+    file: "/research-joe-pool-lake-history.docx",
+  },
+];
+
+function LibraryCard({ item }) {
+  const [open, setOpen] = useState(false);
+  const typeColor = item.type === "Case Study" ? C.sienna : item.type === "Report" ? C.sage : "#7A6A52";
+  return (
+    <div className="reveal" style={{
+      borderLeft: `3px solid ${typeColor}`,
+      marginBottom: 4,
+      background: C.parchment,
+      overflow: "hidden",
+      boxShadow: "2px 2px 8px rgba(0,0,0,0.06)",
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          width: "100%", textAlign: "left", background: "none", border: "none",
+          padding: "20px 28px", cursor: "pointer",
+          display: "flex", alignItems: "flex-start", gap: 18,
+        }}
+      >
+        <span style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.12em",
+          color: typeColor, fontWeight: 600, flexShrink: 0, marginTop: 6,
+          textTransform: "uppercase", minWidth: 72,
+        }}>{item.type}</span>
+        <div style={{ flex: 1 }}>
+          <p style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: "clamp(16px, 2vw, 21px)",
+            fontWeight: 500, fontStyle: "italic",
+            color: C.ink, marginBottom: 3,
+          }}>{item.title}</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.1em", color: C.sage, textTransform: "uppercase" }}>{item.sub}</p>
+        </div>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 18, color: C.sienna, flexShrink: 0, marginTop: 2 }}>{open ? "−" : "+"}</span>
+      </button>
+      <div style={{
+        maxHeight: open ? "800px" : "0",
+        overflow: "hidden",
+        transition: "max-height 0.25s ease",
+        background: C.compOpen,
+      }}>
+        <div style={{ padding: "0 28px 28px 66px" }}>
+          <p style={{
+            fontFamily: "'Lora', serif", fontSize: "clamp(14px, 1.6vw, 16px)",
+            lineHeight: 1.82, color: C.ink,
+            borderTop: `1px solid ${C.rule}`, paddingTop: 18, marginBottom: 20,
+          }}>{item.desc}</p>
+          <a
+            href={item.file}
+            download
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+              letterSpacing: "0.14em", textTransform: "uppercase",
+              fontWeight: 600, color: C.sienna,
+              border: `1px solid ${C.sienna}`, padding: "9px 18px",
+              textDecoration: "none", transition: "background 0.2s, color 0.2s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = C.sienna; e.currentTarget.style.color = C.parchment; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = C.sienna; }}
+          >
+            Download document →
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LibrarySection() {
+  const caseStudies = LIBRARY.filter(d => d.type === "Case Study");
+  const reports = LIBRARY.filter(d => d.type === "Report" || d.type === "Research");
+  return (
+    <SectionWrapper id="library" alt>
+      <SectionLabel number="06" label="The Library" />
+      <SectionH2>The Intelligence Behind the Argument</SectionH2>
+      <SectionSub>Eight documents. Every claim in this portal traces back to one of them.</SectionSub>
+      <Rule />
+      <Body>The analysis on these pages didn't come from intuition. It came from primary research, competitive intelligence, and case study work built specifically for this project. These documents are the foundation — the full arguments, the numbers, the precedents, and the strategic logic that informs every recommendation in this portal.</Body>
+      <Body>They are available to every participant in this charrette. Download what you need. Share what is relevant. Push back where you disagree. That is the point.</Body>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 500px), 1fr))", gap: 40, marginTop: 44 }}>
+        <div>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.18em",
+            textTransform: "uppercase", color: C.sage, fontWeight: 600, marginBottom: 16,
+            borderBottom: `1px solid ${C.rule}`, paddingBottom: 10,
+          }}>Case Studies</p>
+          {caseStudies.map((item, i) => <LibraryCard key={i} item={item} />)}
+        </div>
+        <div>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.18em",
+            textTransform: "uppercase", color: C.sage, fontWeight: 600, marginBottom: 16,
+            borderBottom: `1px solid ${C.rule}`, paddingBottom: 10,
+          }}>Reports + Research</p>
+          {reports.map((item, i) => <LibraryCard key={i} item={item} />)}
+        </div>
+      </div>
+
+      <div className="reveal" style={{
+        marginTop: 52, padding: "28px 32px",
+        background: C.warmBlack, borderTop: `2px solid ${C.sienna}`,
+        display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 20,
+      }}>
+        <div>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.18em",
+            textTransform: "uppercase", color: C.sienna, marginBottom: 8, fontWeight: 600,
+          }}>Need a document not listed here?</p>
+          <p style={{
+            fontFamily: "'Lora', serif", fontStyle: "italic",
+            fontSize: "clamp(13px, 1.5vw, 16px)", lineHeight: 1.75,
+            color: "rgba(245,240,232,0.58)",
+          }}>Additional research, financial models, and site data are available from the project team.</p>
+        </div>
+        <a href="mailto:ericwhitmore@gmail.com" style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.14em",
+          textTransform: "uppercase", fontWeight: 600, color: C.sienna,
+          border: `1px solid ${C.sienna}`, padding: "10px 20px",
+          textDecoration: "none", whiteSpace: "nowrap",
+        }}>Request materials →</a>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SECTION 7 — THE LOOP
 // ═══════════════════════════════════════════════════════════════════════════════
 function LoopSection() {
   const [submitted, setSubmitted] = useState(false);
@@ -1031,7 +1256,7 @@ function LoopSection() {
       background: C.warmBlack,
     }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <SectionLabel number="06" label="The Field" dark />
+        <SectionLabel number="07" label="The Field" dark />
 
         {/* Largest type on the page — closing statement */}
         <h2 className="reveal" style={{
@@ -1168,7 +1393,7 @@ function Footer() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, marginBottom: 20 }}>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: C.parchment, fontWeight: 400, fontVariantLigatures: "common-ligatures" }}>Estes Park</p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: "rgba(245,240,232,0.28)", textTransform: "uppercase" }}>Work Architecture · Version 2.2 · March 2026</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: "rgba(245,240,232,0.28)", textTransform: "uppercase" }}>Work Architecture · Version 2.4 · March 2026</p>
           <a href="mailto:ericwhitmore@gmail.com" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna, letterSpacing: "0.04em" }}>ericwhitmore@gmail.com</a>
         </div>
         <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 12, color: "rgba(245,240,232,0.22)", lineHeight: 1.75 }}>
@@ -1296,7 +1521,7 @@ export default function App() {
   useScrollReveal();
 
   useEffect(() => {
-    const sections = ["story", "place", "market", "comps", "team", "loop"];
+    const sections = ["story", "place", "market", "comps", "team", "library", "loop"];
     const obs = new IntersectionObserver(
       (entries) => entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); }),
       { threshold: 0.25 }
@@ -1316,15 +1541,16 @@ export default function App() {
       <Nav active={activeSection} />
       <Hero />
       <StorySection  onRespond={scrollToLoop} />
-      <ImageDivider src="/cedar-hill-boardwalk.webp" position="center 50%" />
+      <ImageDivider src="/cedar-hill-bluebonnets.jpg" position="center 55%" />
       <PlaceSection  onRespond={scrollToLoop} />
-      <ImageDivider src="/cedar-hill-wetlands.jpg" position="center 40%" />
+      <ImageDivider src="/texas-sunset-field.jpg" position="center 40%" />
       <MarketSection onRespond={scrollToLoop} />
       <ImageDivider src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1600&q=85" position="center 60%" />
       <CompsSection  onRespond={scrollToLoop} />
-      <ImageDivider src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1600&q=85" position="center 50%" />
+      <ImageDivider src="/sand-valley-lodge.jpg" position="center 50%" />
       <TeamSection   onRespond={scrollToLoop} />
-      <ImageDivider src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1600&q=85" position="center 45%" height="36vh" />
+      <ImageDivider src="/golf-cart-oaks.jpg" position="center 45%" height="36vh" />
+      <LibrarySection />
       <LoopSection />
       <Footer />
     </>
