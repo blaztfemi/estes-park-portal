@@ -93,8 +93,21 @@ const globalStyles = `
 `;
 
 // ─── SCROLL REVEAL HOOK ──────────────────────────────────────────────────────
-function useScrollReveal() {
+// useScrollReveal accepts `unlocked` as a dependency so it re-fires the moment
+// the password gate is dismissed and all .reveal elements enter the DOM.
+// Root cause of the "scroll shows nothing on first login" bug:
+//   — on mount, unlocked=false → no .reveal elements exist → observer sees nothing
+//   — password entered → setUnlocked(true) re-renders all sections, but the old
+//     observer (with [] deps) never re-ran → elements stay hidden forever
+// Fix: dep on `unlocked`, skip when false, double-rAF after unlock so React has
+// fully committed + painted before we query .reveal elements.
+function useScrollReveal(unlocked) {
   useEffect(() => {
+    // Don't waste work while the gate is showing — no .reveal elements exist yet
+    if (!unlocked) return;
+
+    let rafId;
+
     const apply = () => {
       const els = document.querySelectorAll(".reveal");
       const obs = new IntersectionObserver(
@@ -103,7 +116,7 @@ function useScrollReveal() {
       );
       els.forEach((el) => {
         const rect = el.getBoundingClientRect();
-        // Already visible on load — reveal immediately, no observer needed
+        // Already in viewport right now → reveal immediately, no observer needed
         if (rect.top < window.innerHeight && rect.bottom >= 0) {
           el.classList.add("revealed");
         } else {
@@ -112,17 +125,21 @@ function useScrollReveal() {
       });
       return obs;
     };
-    // Run after first paint so all elements are mounted
-    const raf = requestAnimationFrame(() => {
-      const obs = apply();
-      // Clean up stored so we can disconnect on unmount
-      (window).__epObs = obs;
+
+    // Double rAF: first frame = React commit, second frame = browser paint.
+    // Guarantees all .reveal nodes are measurable before we run getBoundingClientRect.
+    rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (window.__epObs) { window.__epObs.disconnect(); window.__epObs = null; }
+        window.__epObs = apply();
+      });
     });
+
     return () => {
-      cancelAnimationFrame(raf);
-      if (window.__epObs) window.__epObs.disconnect();
+      cancelAnimationFrame(rafId);
+      if (window.__epObs) { window.__epObs.disconnect(); window.__epObs = null; }
     };
-  }, []);
+  }, [unlocked]); // re-run when gate clears
 }
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
@@ -1630,7 +1647,7 @@ export default function App() {
     () => !PORTAL_KEY || sessionStorage.getItem("ep_unlocked") === "1"
   );
 
-  useScrollReveal();
+  useScrollReveal(unlocked);
 
   useEffect(() => {
     const sections = ["story", "place", "market", "comps", "team", "library", "loop"];
