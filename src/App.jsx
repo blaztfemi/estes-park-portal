@@ -597,7 +597,7 @@ function PlaceSection({ onRespond }) {
   return (
     <SectionWrapper id="place" alt>
       <SectionLabel number="02" label="The Place" />
-      <SectionH2>The Land Remembers What We Forgot</SectionH2>
+      <SectionH2>The Land Remembers</SectionH2>
       <SectionSub>1,200 acres. 100 million years. One story no one has told.</SectionSub>
       <Rule />
       <TwoCol
@@ -652,7 +652,7 @@ function PlaceSection({ onRespond }) {
               fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em",
               textTransform: "uppercase", color: C.sage, marginBottom: 14, fontWeight: 500,
             }}>Naming Anchors</p>
-            {["White Rock Escarpment", "Mountain Creek", "Austin Chalk", "Cross Timbers", "Cuesta (Spanish for the ridgeline)"].map((name, i) => (
+            {["White Rock Escarpment", "Austin Chalk", "Cross Timbers", "Cove Bridges", "Cuesta (Spanish for the ridgeline)"].map((name, i) => (
               <p key={i} style={{
                 fontFamily: "'Lora', serif", fontSize: 14, lineHeight: 1.75, color: C.ink,
                 paddingLeft: 12, borderLeft: `2px solid ${C.rule}`, marginBottom: 10,
@@ -1012,7 +1012,7 @@ function CompsSection({ onRespond }) {
   return (
     <SectionWrapper id="comps" alt>
       <SectionLabel number="04" label="The Comps" />
-      <SectionH2>It's Been Done Before. Just Never Here.</SectionH2>
+      <SectionH2>{"It's Never Been Done."}<br />{"Just Never Here."}</SectionH2>
       <SectionSub>Twelve precedents — drawn directly from the charrette boards — that prove what's possible, and what each one teaches this project.</SectionSub>
       <Rule />
       <Body>The great golf destinations weren't acts of faith. They were acts of studied conviction — developers and architects who looked at what had worked elsewhere, understood exactly why it worked, and built something rooted in those principles but honest to their own land. Each of these twelve precedents was chosen because it speaks directly to a decision on the table for this site. Expand any card to read the intelligence. Download the full report to go deeper.</Body>
@@ -1033,14 +1033,9 @@ function CompsSection({ onRespond }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 const TEAM = [
   {
-    name: "David McDonald", role: "President", org: "Escalante Golf",
-    bio: "David McDonald has built Escalante into the most distinctive boutique golf operator in America, 25 properties across 17 states. From ultra-exclusive Canyata, a Top 100 World property approaching $1 million in entry, to walking-only Kingsley Club in Michigan, to the 350-room Kingsmill Resort in Virginia. He walked away from a $100M golf project in Aledo, Texas in January 2024 rather than compromise on operational control and brand authority. Estes Park is his second attempt at the DFW flagship he's always needed. He needs confidence that this team and this city can deliver the project his name goes on.",
+    name: "David McDonald", role: "Escalante Golf", org: "Operator",
+    bio: "David McDonald has built Escalante into the most distinctive boutique golf operator in America — 25 properties across 17 states. From ultra-exclusive Canyata, a Top 100 World property approaching $1 million in entry, to walking-only Kingsley Club in Michigan, to the 350-room Kingsmill Resort in Virginia. Every Escalante property carries a singular promise: no compromise on operational control, brand authority, or architectural conviction. The DFW market has been waiting for the flagship this region deserves. This is the project that delivers it.",
     link: { label: "escalantegolf.com", url: "https://www.escalantegolf.com" },
-  },
-  {
-    name: "Work Architecture", role: "Planning + Strategy Lead", org: "Work Architecture",
-    bio: "Work Architecture is the strategic and planning intelligence layer for this project. Founded by Eric Whitmore, Work Architecture exists to help cities and developers see exactly what a project could be before they spend a dime figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision. No firm in DFW has taken a project from concept to charrette faster. That speed is a feature, not a shortcut.",
-    link: { label: "workad.org", url: "https://www.workad.org" },
   },
   {
     name: "OCM Golf", role: "Golf Course Architects / Design-Build", org: "Ogilvy · Cocking · Mead",
@@ -1048,13 +1043,13 @@ const TEAM = [
     link: { label: "ocm.golf", url: "https://www.ocm.golf" },
   },
   {
-    name: "Randy Hoffacker", role: "Master Planner", org: "Work Architecture",
-    bio: "Randy Hoffacker is the spatial architect of this vision. He translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a prior working history with Escalante Golf properties, his first site read set the direction: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. His background in construction management means he doesn't just design programs. He designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
+    name: "Randy Hoffacker", role: "Master Planner", org: "Destination Designs",
+    bio: "Randy Hoffacker is the spatial architect of this vision. He translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a proven track record on Escalante Golf properties, his first site read set the direction: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. His background in construction management means he doesn't just design programs — he designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
   },
   {
-    name: "Mayor Ron Jensen", role: "Mayor", org: "City of Grand Prairie",
-    bio: "Ron Jensen has been Grand Prairie's mayor since 2013. Five terms. Executing a single clear vision: transforming Grand Prairie from a pass-through suburb into a destination city. His track record speaks for itself: $165M in the EpicCentral entertainment district, the Goodland annexation of 1,500 acres with 50,000 projected residents, Major League Cricket headquarters relocation from San Francisco, and a $327M general obligation bond on the May 2026 ballot. Grand Prairie holds an AAA S&P bond rating and ranked #2 nationally in permitting efficiency in 2025. He will champion this project. He needs it framed as community benefit for a diverse, working-class constituency.",
-    link: { label: "gptx.org", url: "https://www.gptx.org" },
+    name: "Work Architecture", role: "Planning + Strategy Lead", org: "Work Architecture",
+    bio: "Work Architecture is the strategic and planning intelligence layer for this project. Founded by Eric Whitmore, Work Architecture exists to help cities and developers see exactly what a project could be before they spend a dime figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision. No firm in DFW has taken a project from concept to charrette faster. That speed is a feature, not a shortcut.",
+    link: { label: "workad.org", url: "https://www.workad.org" },
   },
 ];
 
@@ -1065,6 +1060,26 @@ function TeamSection({ onRespond }) {
       <SectionH2>The People Who Make This Real</SectionH2>
       <SectionSub>Each person in this room brings something no one else can. This is who they are.</SectionSub>
       <Rule />
+
+      {/* City of Grand Prairie — intro context, not a card */}
+      <div className="reveal" style={{
+        borderLeft: `3px solid ${C.sienna}`,
+        paddingLeft: 24, marginBottom: 36,
+      }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.sage, marginBottom: 8, fontWeight: 500 }}>The City</p>
+        <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 500, color: C.ink, marginBottom: 10, fontVariantLigatures: "common-ligatures" }}>City of Grand Prairie</p>
+        <p style={{ fontFamily: "'Lora', serif", fontSize: 14, lineHeight: 1.92, color: C.ink, maxWidth: 780 }}>
+          Grand Prairie has never waited to be discovered. It built its own future. From the 728 aircraft produced in 30 days at North American Aviation in 1944, to the $165M EpicCentral entertainment district, to the Goodland annexation bringing 50,000 new residents to the city's western edge — this is a city that knows how to execute at scale. It holds an AAA S&P bond rating, ranked #2 nationally in permitting efficiency in 2025, and a $327M general obligation bond on the May 2026 ballot. Grand Prairie is not a pass-through suburb. It is a destination city in the making. This project is the next chapter.
+        </p>
+        <p style={{ marginTop: 12 }}>
+          <a href="https://www.gptx.org" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna }}>
+            gptx.org →
+          </a>
+        </p>
+      </div>
+
+      {/* Team cards grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 3 }}>
         {TEAM.map((member, i) => (
           <div key={i} className="reveal" style={{
@@ -1086,7 +1101,24 @@ function TeamSection({ onRespond }) {
             )}
           </div>
         ))}
+
+        {/* Ghost cards — future collaborators */}
+        {[1, 2].map((n) => (
+          <div key={`ghost-${n}`} className="reveal" style={{
+            background: "transparent",
+            padding: "28px 28px 24px",
+            borderTop: `1px dashed ${C.rule}`,
+            border: `1px dashed ${C.rule}`,
+            opacity: 0.45,
+            display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start",
+            minHeight: 180,
+          }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.sage, marginBottom: 10, fontWeight: 500 }}>Future Collaborator</p>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(16px, 1.8vw, 20px)", fontWeight: 400, fontStyle: "italic", color: C.ink, opacity: 0.5 }}>Who else belongs at this table?</p>
+          </div>
+        ))}
       </div>
+
       <FeedbackPrompt
         question="Who else belongs at this table? What expertise or perspective is missing from this team that would make the project stronger?"
         onRespond={onRespond}
