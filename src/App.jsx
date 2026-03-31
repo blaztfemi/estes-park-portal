@@ -763,92 +763,148 @@ function MarketSection({ onRespond }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 const COMPS = [
   {
-    num: "01", name: "Bandon Dunes", sub: "Bandon, Oregon · 1999 · 6 Courses",
-    callout: "Built 4.5 hours from Portland. Needed 12,000 rounds to break even. Got 24,000. This site is 20 minutes from 8.3 million people. The risk here is categorically different.",
+    num: "01", name: "Bandon Dunes", sub: "Bandon, Oregon · Walking-Only · 6 Courses",
+    img: "/comp-bandon.jpg",
+    callout: "Built 4.5 hours from Portland. Needed 12,000 rounds to break even in Year 1. Got 24,000. This site is 20 minutes from 8.3 million people. The demand mathematics here are not comparable — they're 617 times more favorable.",
     teaches: [
-      "Walking-only with caddies is not a constraint. It is a premium positioning decision.",
-      "A single great course that exceeds break-even by 2× in Year 1 generates enough cash flow to self-fund every subsequent phase",
-      "Community benefit (800+ jobs, $16.7M payroll, $740K+ in annual property taxes) is inseparable from the resort's long-term success",
+      "Walking-only and caddie-first is not a constraint — it's a premium signal that immediately differentiates the product from every cart-path operation in the DFW market.",
+      "Cottage pods command $1,100–$2,100/night and outperform central inns in both RevPAR and guest loyalty. On a free land lease, sprawl costs nothing — build the pods.",
+      "The fire pit, the cigar culture, and the underground Bunker Bar are not amenities — they're the operational mechanism that extends dwell time, drives high-margin F&B, and builds the cult following.",
     ],
-    numbers: "~$99M est. annual revenue · 300+ rooms · 800+ employees · Largest private employer in Coos County",
-    links: [{ label: "Bandon Dunes Golf Resort", url: "https://www.bandondunesgolf.com" }, { label: "Oregon Encyclopedia", url: "https://www.oregonencyclopedia.org/articles/bandon_dunes_golf_resort/" }],
+    numbers: "~$99M est. annual revenue · 300+ rooms dispersed as cottage pods · 800+ employees · 23,000 rounds Year 1 against a 12,000 break-even",
+    docUrl: "/reports/bandon-dunes.docx",
   },
   {
-    num: "02", name: "Pinehurst", sub: "Pinehurst, North Carolina · 1895 · 10+ Courses",
-    callout: "$1.25 an acre for deforested land in 1895. One architect who never left. 130 years of compounding mythology. The $1/year lease on this site is the same story, a different century.",
+    num: "02", name: "Cabot Citrus", sub: "Brooksville, Florida · 1,200 Acres · 57 Holes",
+    img: "/comp-cabot.jpg",
+    callout: "The social hub isn't the clubhouse — it's the food truck between the practice facility and the short course. Cabot Citrus solved the gathering problem first and let the architecture follow the people.",
     teaches: [
-      "Village-first, golf-second: a walkable community where the course is the village green, not an isolated compound",
-      "Distributed lodging across inns and cottages creates intimacy at scale",
-      "Long-term stewardship by a single design voice builds irreplaceable architectural character that cannot be manufactured",
+      "Pre-selling 2–4 bedroom cottages at $1.7M–$3M with a resort rental program funds construction before you've opened — and creates owners who are also your most loyal ambassadors.",
+      "The walkable resort village positioned between the short course, the practice facility, and the casual food-and-beverage hub is where the social energy actually lives. Design the hub first.",
+      "Florida vernacular — raised scissor trusses, large windows, serene indoor-outdoor living — is the language of unpretentious luxury that draws the modern golf traveler.",
     ],
-    numbers: "U.S. Opens scheduled through 2047 · National Historic Landmark · 'Home of American Golf' · $2B+ estimated economic impact to North Carolina",
-    links: [{ label: "Village of Pinehurst", url: "https://www.villageofpinehurst.com" }, { label: "USGA Golf House Pinehurst", url: "https://www.usga.org/content/usga/home-page/usga-golf-house-pinehurst.html" }],
+    numbers: "57 holes · Cottage nightly rates from $1,250+ · Resort village anchors all foot traffic · Cabot Collection's first U.S. property",
+    docUrl: "/reports/cabot-citrus.docx",
   },
   {
-    num: "03", name: "Kohler / Whistling Straits", sub: "Kohler, Wisconsin · 1998 · 4 Courses",
-    callout: "800,000 cubic yards of imported sand on a flat Army airfield. Before Kohler, Wisconsin hadn't hosted a men's major in 71 years. The 2021 Ryder Cup alone generated $135M in economic impact. The land doesn't have to be dramatic. The architecture does.",
+    num: "03", name: "PGA Frisco", sub: "Frisco, Texas · 500 Rooms · The Cautionary Tale",
+    img: "/comp-frisco.jpg",
+    callout: "Strong land plan. Terrible architecture. The ice cream shop, the pub, and the golf cottages are carbon copies of each other. PGA Frisco is in your backyard, and it proves that the boutique market — walking-only, architecturally distinctive, intimate — is completely empty.",
     teaches: [
-      "The most transformative sites often look like liabilities before the architect arrives",
-      "Campus lodging (The American Club as the anchor hotel + distributed cottage facilities) is the programming model Escalante already uses at its best properties",
-      "Brand architecture as design philosophy: every building, every hole, every detail reinforcing the same story",
+      "The arrival at PGA Frisco feels like entering a corporate campus. That's not a compliment for a golf resort. The arrival at Estes Park must signal a complete departure from the world guests just left.",
+      "127,000 sq ft of convention space and 13 restaurant concepts creates a one-and-done resort experience. Estes Park's intimacy is the differentiator — not something to apologize for.",
+      "$315 green fees with mandatory caddies already prove DFW golfers will pay above $400 per round. The premium public market exists. The boutique product to serve it does not.",
     ],
-    numbers: "PGA Championships (2004, 2010, 2015) · 2021 Ryder Cup: $135M economic impact",
-    links: [{ label: "Destination Kohler", url: "https://www.destinationkohler.com" }],
+    numbers: "$520M total investment · $315 peak green fees · 500+ rooms · DFW's only luxury golf resort — and an object lesson in how not to build one",
+    docUrl: "/reports/pga-frisco.docx",
   },
   {
-    num: "04", name: "Streamsong", sub: "Bowling Green, Florida · 2012 · 4 Courses",
-    callout: "Industrial waste land that looks like Scotland. 90 minutes from Tampa in the Florida hinterlands. 90,000 rounds a year. Streamsong didn't apologize for its land. It made the land the point. This site has better bones than Streamsong ever did.",
+    num: "04", name: "Miakka Golf Club", sub: "Myakka City, Florida · 1,100 Acres · Ultra-Premium Private",
+    img: "/comp-myakka.jpg",
+    callout: "They moved enough earth to create 48 feet of elevation change where none existed. They imported thousands of trees. They built the landscape before they built the course. The lesson: the land is never the limit.",
     teaches: [
-      "Terrain character matters more than terrain pedigree. The story of the land is more important than the land's conventional attractiveness.",
-      "Multi-architect strategy generates multiple reasons to visit and multiple audiences to serve",
-      "Cautionary tale: inconsistent architectural character across phases weakens long-term brand identity. A master plan committed to a single design vocabulary protects it.",
+      "Massive earthwork, strategic tree planting, and a 40-acre lake transformed a blank Florida site into a dramatic, immersive arrival that creates emotional connection before the first tee shot.",
+      "The 360-degree driving range, 12-hole par-3 course, and 2.5-acre putting green aren't amenities — they're revenue drivers that fill the hours between rounds and keep guests on property.",
+      "Ten private member cabins in 4- and 8-bedroom layouts serve the high-net-worth group market better than any hotel room configuration can. Privacy drives price.",
     ],
-    numbers: "Sold 2023 for $160M · 7,000 acres with expansion potential · 4th course (The Chain) opened 2024",
-    links: [{ label: "Streamsong Resort", url: "https://www.streamsongresort.com" }, { label: "Golf Digest", url: "https://www.golfdigest.com" }],
+    numbers: "1,100 acres · 48ft elevation change created from scratch · 10 private cabins · Co-designed with PGA Tour player Paul Azinger · Late 2025 opening",
+    docUrl: "/reports/myakka.docx",
   },
   {
-    num: "05", name: "Sand Valley", sub: "Nekoosa, Wisconsin · 2017 · 4 Courses",
-    callout: "Sold out its first season. Three hours from any major city. Sand Valley proves the model scales. With 8.3M people within 30 minutes, the demand math here is fundamentally better from day one.",
+    num: "05", name: "Old Shores", sub: "Vernon, Florida · 1,400 Acres · Dream Golf 2.0",
+    img: "/comp-old-shores.jpg",
+    callout: "Michael Keiser Jr. looked at his father's model — remote, golf-only, buddy trips — and deliberately made it better. Old Shores is for families, non-golfers, and people who want to come back every year. Dream Golf 2.0 is the right model for Grand Prairie.",
     teaches: [
-      "Founding member model (160 members × $50K = $8M pre-opening) creates committed ambassadors, not just revenue",
-      "Phase 1 discipline: one great course done perfectly. That builds more conviction for Phase 2 than an overbuilt Phase 1 ever could.",
-      "Five-month golf season serving a 680K metro catchment. Estes Park has year-round playability and 8.3M people within 30 minutes.",
+      "The walkable Scottish village hub — organic ribbon development, variable setbacks, massing variety — makes the resort feel centuries old on opening day and maximizes dwell time for non-golfers.",
+      "Parents at the bar watching kids putt nearby is not an accident. It's a spatial design decision that extends dwell time by eliminating the friction that ends evenings early.",
+      "The Dog Trot house — two cabins under one roof with an open-air breezeway — delivers frontier luxury at half the cost of dispersed freestanding cottages. And it's perfectly Texan.",
     ],
-    numbers: "160 founding members × $50,000 = $8M pre-opening capital · Year-round season advantage over Midwest comps",
-    links: [{ label: "Sand Valley Golf Resort", url: "https://www.sandvalleygolfresort.com" }, { label: "Fried Egg Golf", url: "https://www.friedegggolf.com" }],
+    numbers: "1,400 acres · Tom Doak initial course · 40ft natural elevation change · Preview play late 2026 · Grand opening fall 2027",
+    docUrl: "/reports/old-shores.docx",
   },
   {
-    num: "06", name: "PGA Frisco / Fields Ranch", sub: "Frisco, Texas · 2023 · 2+ Courses",
-    callout: "$520M proves DFW supports destination golf at massive scale. The Omni is a convention hotel in golf clothing. The boutique segment, walking-only, architecturally pure, intimate, is completely empty. PGA Frisco is not the competition. It's the proof of concept.",
+    num: "06", name: "Pebble Beach", sub: "Del Monte Forest, California · $675/Round · 492 Keys",
+    img: "/comp-pebble.jpg",
+    callout: "$675 per round, fully public, no membership required. The Tap Room has a server who's worked there 36 years. That server IS the institution in a way no design element can replicate. You can't buy 100 years of history — but you can design for the accumulation of it.",
     teaches: [
-      "DFW's public-private partnership appetite is proven and sophisticated (TIRZ, Chapter 380, state HOT rebates, direct city investment: all executed at this scale)",
-      "Fields Ranch East's walking-only Gil Hanse course has been the most critically acclaimed element of the development, buried inside a corporate mega-resort complex",
-      "Adjacent Fields master plan ($10–12.7B projected buildout) demonstrates the catalytic effect of destination golf on surrounding land values",
+      "The arrival sequence — gate → forest → ocean reveal — is pure emotional architecture. Joe Pool Lake has the peninsula geography to execute an identical choreography: suppress the water, build anticipation through elevation, then deliver the lake reveal.",
+      "Public golf at $675 proves that pricing permission comes from intensity of experience, not exclusivity of access. Streamsong proved it on a phosphate mine. The DFW waterfront is even more compelling.",
+      "The DFW Metroplex has zero waterfront golf of any kind. 100+ public courses at $30–$120. One convention-hotel resort at $315. The gap between $120 and a premium lakeside destination is entirely unoccupied.",
     ],
-    numbers: "$520M total investment · $2.5B projected 20-year economic impact · 23 PGA championships committed · Adjacent Fields master plan: $10–12.7B projected buildout",
-    links: [{ label: "PGA Frisco", url: "https://www.pgafrisco.com" }, { label: "City of Frisco EDC", url: "https://www.friscoedc.com" }],
+    numbers: "$675/round · 78,000 rounds/year · 492 keys · Est. $400–600M annual revenue · 6 U.S. Opens · DFW equivalent: 3.32× the population at 1/13th the travel time",
+    docUrl: "/reports/pebble-beach.docx",
   },
   {
-    num: "07", name: "Cabot Cape Breton", sub: "Inverness, Nova Scotia · 2012 · 3 Courses",
-    callout: "Reversed a generation of out-migration from a dead coal town. 500 jobs created. Cottages that sold for $10,000 now fetch $150,000+. The best precedent for what destination golf does to a community that has been written off. Grand Prairie hasn't been written off. It's been overlooked. The difference matters.",
+    num: "07", name: "Pinehurst", sub: "Pinehurst, North Carolina · $1.25/Acre · 10 Courses",
+    img: "/comp-pinehurst.jpg",
+    callout: "James Tufts paid $1.25 an acre for deforested wasteland and hired Olmsted to build a city on it. You have the lease for $1 a year. The economic mechanism is identical — negligible land cost frees the capital to build something world-class.",
     teaches: [
-      "Community transformation as explicit mission, not byproduct. The inverse of the Bandon model.",
-      "Cottage resale appreciation is a community wealth creation mechanism that local elected officials can point to as direct constituent benefit",
-      "Workforce development and youth employment programs transform a resort from luxury imposition to community institution. That matters for Grand Prairie's diverse, working-class constituency",
+      "The stadium finish at The Deuce — veranda overlooking the 18th green, the 'Deuce Coin' for birdies, bourbon-fueled heckling — transforms every round into public theater and traps social energy in the highest-margin space on the property.",
+      "A walkable Olmsted village with concentric curved streets, street-level activation, and micro-golf adjacent to the clubhouse keeps non-golfers engaged and generating incidental spend all day.",
+      "Mythological status is a verb: Pinehurst needed 6 years for national recognition and decades for majors. The compounding begins on opening day — aggressive event programming, not waiting for reputation to arrive.",
     ],
-    numbers: "500+ jobs · Canada's Meritorious Service Medal for community revitalization · Cottage values: $10,000 → $150,000+",
-    links: [{ label: "Cabot Golf", url: "https://www.cabotgolf.com" }, { label: "Cape Breton Spectator", url: "https://capebretonspectator.com" }],
+    numbers: "10 courses · USGA Anchor Site through 2047 · $60M Golf House Pinehurst · $2B+ N.C. economic impact · 'Home of American Golf'",
+    docUrl: "/reports/pinehurst.docx",
   },
   {
-    num: "08", name: "Wild Spring Dunes", sub: "Mt. Enterprise, Texas · Opening Fall 2026",
-    callout: "The Keiser family's general manager said it himself: 'With all due respect, I don't think Texas has a really great golf resort yet.' He's building one. 175 miles from Dallas. This site is 20 minutes from Dallas. The category he's proving exists. We're building it at the center of the market.",
+    num: "08", name: "Rodeo Dunes", sub: "Eastern Colorado · 4,000 Acres · Dream Golf",
+    img: "/comp-rodeo.webp",
+    callout: "85-foot sand dunes. A showdeo arena for roping demonstrations. Coore & Crenshaw for the first course. Dream Golf built the Western vernacular precedent they've never had. This is what bold design vocabulary looks like when the land earns it.",
     teaches: [
-      "Wild Spring Dunes serves the dedicated golf pilgrim who will drive 3 hours for an extraordinary experience. This project serves everyone else.",
-      "The markets are more complementary than competitive: Wild Spring builds the mythology that makes DFW golfers want a world-class destination; this project is that destination, accessible every weekend",
-      "Pre-opening capital model (deposits at $65K–$115K) validates the founding member pricing architecture for this project",
+      "Golf first, then activate lodging: Rodeo Dunes is opening with courses before full amenities, proving that great golf can sustain a resort while the hospitality layer phases in behind it.",
+      "The owner-rental model — sell cabins and villas in advance, integrate them into the resort rental program — funds construction, creates a loyal owner community, and delivers residential-scale comfort from day one.",
+      "Western vernacular — raw timber, corrugated metal, ranch structures — is the design language that makes a Texas lakeside resort feel honest to its landscape rather than imported from Scottsdale.",
     ],
-    numbers: "Founding member deposits: $65,000 → $115,000 (sold out escalating tranches)",
-    links: [{ label: "Wild Spring Dunes", url: "https://www.wildspringdunes.com" }, { label: "The Golf Travel Guru", url: "https://www.golfpassport.com" }],
+    numbers: "4,000 acres · Dunes up to 85–100ft · Coore & Crenshaw + Jimmy Craig courses · Showdeo arena · Convenient to Denver International Airport",
+    docUrl: "/reports/rodeo-dunes.docx",
+  },
+  {
+    num: "09", name: "Streamsong", sub: "Bowling Green, Florida · 3 Top-30 Courses · Study in Contrast",
+    img: "/comp-streamsong.webp",
+    callout: "$375–$425 per round. No ocean, no championship history, no proximity to a major city. Streamsong proved that world-class architecture plus a dramatic natural setting equals premium pricing permission, regardless of coastline. The cautionary tale is just as valuable as the success.",
+    teaches: [
+      "Transforming industrial wasteland into dramatic dunes and lakeside terrain works: Streamsong went from phosphate mine to three Top-30 courses. Joe Pool Lake's terrain is already compelling — the design just needs to honor it.",
+      "Multiple isolated clubhouses — one per course — create no central sense of arrival. The first human contact is at the bag drop. Estes Park must solve arrival as a primary design constraint, not an afterthought.",
+      "Golf great, experience lacking. Architectural character generic, unresponsive to the place. That's the cautionary tale: great golf alone is not enough to build a lasting brand.",
+    ],
+    numbers: "3 courses: Doak + Coore/Crenshaw + Hanse · $375–425/round peak · 228 rooms · Sold 2023 for $160M · The Chain short course opened 2024",
+    docUrl: "/reports/streamsong.docx",
+  },
+  {
+    num: "10", name: "The Loop at The Patch", sub: "Augusta, Georgia · TGR Design · Opening April 2026",
+    img: "/comp-loop.jpg",
+    callout: "Tiger Woods designed a nine-hole par-3 course for $15 a round at the public course that has caddied the Masters for generations. The Loop opens April 15, 2026 — the day after the Masters. That is not a coincidence. That is a statement about who golf is for.",
+    teaches: [
+      "A short course at $15–30 makes golf accessible to families, juniors, and first-timers without diluting the main product — and produces the highest rounds-per-acre revenue on the property.",
+      "Paired with a TGR Learning Lab and Augusta Technical College partnerships, The Loop builds a pipeline from casual player to career in the golf industry — worth studying for Grand Prairie's community strategy.",
+      "Affordable pricing and community access are not in conflict with premium aspirations. Pinehurst has The Cradle at $30. Estes Park needs its own version to anchor the local market and grow the next generation of regulars.",
+    ],
+    numbers: "$15 local / $30 non-local · 9-hole par-3 TGR Design · Fully renovated 18-hole Tom Fazio + Beau Welling course · TGR Foundation Learning Lab planned 2028",
+    docUrl: "/reports/loop-at-the-patch.docx",
+  },
+  {
+    num: "11", name: "The Stadium Finish", sub: "TPC Sawgrass · Pinehurst No. 2 · Pebble Beach 18th",
+    img: "/comp-stadium.jpg",
+    callout: "In traditional golf, the round ends quietly: a final putt, a handshake, a walk to the parking lot. A stadium finish flips that script — and funnels the emotional peak of the round directly into the highest-margin space on the property.",
+    teaches: [
+      "Both courses at Estes Park finishing in a shared coliseum-style amphitheater generates the Golden Hour economy — the post-round window when F&B spend is highest, loyalty is cemented, and strangers become regulars.",
+      "Spectatorship turns individual rounds into collective memory. 'Remember when everyone on the veranda cheered your birdie?' That story is the reason guests come back and bring their group.",
+      "The stadium finish doesn't need to be loud or commercial — it can be elegant and natural, with subtle grading and comfortable sightlines that feel organic to the land. The mechanism is intimacy, not spectacle.",
+    ],
+    numbers: "Model precedents: TPC Sawgrass · Pinehurst No. 2 Deuce · Pebble Beach 18th · The Golden Hour captures the highest F&B margin of the day",
+    docUrl: "/reports/stadium-finish.docx",
+  },
+  {
+    num: "12", name: "Whistling Straights", sub: "Kohler, Wisconsin · 2021 Ryder Cup · The American Club",
+    img: "/comp-whistling.jpg",
+    callout: "Pete Dye moved 13,000 tons of rock to fake an Irish links on a flat Wisconsin lakeshore. The Ryder Cup generated $135M in economic impact. But the most important precedent isn't the course — it's The American Club, the central inn that is the social heart of the entire experience.",
+    teaches: [
+      "A distinctive, high-service central inn creates the brand even when located a short distance from the golf. Guests decompress at The American Club after their rounds — it's where the stories get told and the loyalty gets built.",
+      "Walking-only on the Straits Course signals premium and preserves the links experience. The Irish Course plays with carts. The differentiation between formats is itself a product strategy.",
+      "The Farmhouse restaurant's sightlines to the dramatic 18th hole prove that dining with a view of finishing golf is not a perk — it's the entire architecture of the post-round experience.",
+    ],
+    numbers: "2021 Ryder Cup: $135M economic impact · PGA Championships 2004, 2010, 2015 · The American Club: Forbes Five-Star lodging · Walking-only Straits Course",
+    docUrl: "/reports/whistling-straights.docx",
   },
 ];
 
@@ -889,12 +945,28 @@ function CompCard({ comp }) {
 
       {/* Folder-open content — max-height transition */}
       <div style={{
-        maxHeight: open ? "2000px" : "0",
+        maxHeight: open ? "2400px" : "0",
         overflow: "hidden",
-        transition: "max-height 0.25s ease",
+        transition: "max-height 0.35s ease",
         background: C.compOpen,
       }}>
-        <div className="comp-open-content" style={{ padding: "0 28px 28px 66px" }}>
+        {/* Case study image */}
+        {comp.img && (
+          <div style={{
+            width: "100%", height: "220px", overflow: "hidden",
+          }}>
+            <img
+              src={comp.img}
+              alt={comp.name}
+              style={{
+                width: "100%", height: "100%", objectFit: "cover",
+                filter: "sepia(8%) contrast(95%) brightness(97%)",
+                display: "block",
+              }}
+            />
+          </div>
+        )}
+        <div className="comp-open-content" style={{ padding: "20px 28px 28px 66px" }}>
           <blockquote style={{
             fontFamily: "'Playfair Display', serif", fontStyle: "italic",
             fontSize: "clamp(14px, 1.8vw, 18px)", lineHeight: 1.68,
@@ -913,15 +985,23 @@ function CompCard({ comp }) {
               }}>{t}</li>
             ))}
           </ul>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(28,28,26,0.55)", marginBottom: 14, lineHeight: 1.6 }}>{comp.numbers}</p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}>
-            {comp.links.map((l, i) => (
-              <span key={i}>
-                <a href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: C.sienna }}>{l.label}</a>
-                {i < comp.links.length - 1 ? " · " : ""}
-              </span>
-            ))}
-          </p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(28,28,26,0.55)", marginBottom: 18, lineHeight: 1.6 }}>{comp.numbers}</p>
+          {comp.docUrl && (
+            <a
+              href={comp.docUrl}
+              download
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                letterSpacing: "0.1em", textTransform: "uppercase",
+                color: C.sienna, textDecoration: "none", fontWeight: 600,
+                borderBottom: `1px solid ${C.sienna}`, paddingBottom: 2,
+              }}
+            >
+              <span style={{ letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>Go Deeper →&nbsp;</span>
+              <span style={{ fontWeight: 400, textTransform: "none", letterSpacing: "0.02em" }}>Download Full Report</span>
+            </a>
+          )}
         </div>
       </div>
     </div>
@@ -933,9 +1013,9 @@ function CompsSection({ onRespond }) {
     <SectionWrapper id="comps" alt>
       <SectionLabel number="04" label="The Comps" />
       <SectionH2>It's Been Done Before. Just Never Here.</SectionH2>
-      <SectionSub>Eight precedents that prove what's possible, and what each one teaches this project.</SectionSub>
+      <SectionSub>Twelve precedents — drawn directly from the charrette boards — that prove what's possible, and what each one teaches this project.</SectionSub>
       <Rule />
-      <Body>The great golf destinations weren't acts of faith. They were acts of studied conviction. Developers and architects who looked at what had worked elsewhere, understood exactly why it worked, and built something rooted in those principles but honest to their own land.</Body>
+      <Body>The great golf destinations weren't acts of faith. They were acts of studied conviction — developers and architects who looked at what had worked elsewhere, understood exactly why it worked, and built something rooted in those principles but honest to their own land. Each of these twelve precedents was chosen because it speaks directly to a decision on the table for this site. Expand any card to read the intelligence. Download the full report to go deeper.</Body>
       <Body>What follows are the eight most relevant precedents for this project. Not for imitation. For ammunition.</Body>
       <div style={{ marginTop: 36 }}>
         {COMPS.map(c => <CompCard key={c.num} comp={c} />)}
