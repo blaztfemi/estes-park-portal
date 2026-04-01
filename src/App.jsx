@@ -782,7 +782,7 @@ const COMPS = [
   {
     num: "01", name: "Bandon Dunes", sub: "Bandon, Oregon · Walking-Only · 6 Courses",
     img: "/comp-bandon.jpg",
-    callout: "Built 4.5 hours from Portland. Needed 12,000 rounds to break even in Year 1. Got 24,000. This site is 20 minutes from 8.3 million people. The demand mathematics here are not comparable — they're 617 times more favorable.",
+    callout: "Built 4.5 hours from Portland. Needed 12,000 rounds to break even in Year 1. Got 24,000. This site sits at the center of a metro area of 8.3 million people — most within 30 minutes. The demand mathematics here are not comparable — they're 617 times more favorable.",
     teaches: [
       "Walking-only and caddie-first is not a constraint — it's a premium signal that immediately differentiates the product from every cart-path operation in the DFW market.",
       "Cottage pods command $1,100–$2,100/night and outperform central inns in both RevPAR and guest loyalty. On a free land lease, sprawl costs nothing — build the pods.",
