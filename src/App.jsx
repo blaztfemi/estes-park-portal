@@ -1031,22 +1031,22 @@ function CompsSection({ onRespond }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 const TEAM = [
   {
-    name: "David McDonald", role: "Escalante Golf", org: "Operator",
-    bio: "David McDonald has built Escalante into the most distinctive boutique golf operator in America — 25 properties across 17 states. From ultra-exclusive Canyata, a Top 100 World property approaching $1 million in entry, to walking-only Kingsley Club in Michigan, to the 350-room Kingsmill Resort in Virginia. Every Escalante property carries a singular promise: no compromise on operational control, brand authority, or architectural conviction. The DFW market has been waiting for the flagship this region deserves. This is the project that delivers it.",
+    name: "Escalante Golf", role: "Golf Operator", org: "Boutique Golf Management",
+    bio: "Escalante Golf is the most distinctive boutique golf operator in America — a portfolio spanning 17 states that ranges from Top 100 World-ranked private clubs and walking-only pure golf experiences to full-scale resort operations. Every Escalante property carries a singular promise: no compromise on operational control, brand authority, or architectural conviction. The DFW market has been waiting for the flagship this region deserves. This is the project that delivers it.",
     link: { label: "escalantegolf.com", url: "https://www.escalantegolf.com" },
   },
   {
-    name: "OCM Golf", role: "Golf Course Architects / Design-Build", org: "Ogilvy · Cocking · Mead",
-    bio: "OCM Golf is the only firm in golf architecture that designs, builds, and maintains its own work, from first concept sketch through construction, grow-in, and agronomic consultation. Geoff Ogilvy (2006 US Open Champion at Winged Foot) grew up on Melbourne's Sandbelt courses, where golf rewards creativity and punishes nothing. The philosophy runs through every OCM design: architecture that closes the gap between the scratch player and the 18-handicapper rather than widen it. Their first U.S. project was Shady Oaks in Fort Worth. Their Luling Sport course will be their first walking-only project in the state. A direct precedent for this work.",
+    name: "OCM Golf", role: "Golf Course Design + Build", org: "Ogilvy · Cocking · Mead",
+    bio: "Design. Build. Keep. OCM is the only firm in golf architecture that designs, builds, and maintains its own work — from first concept through construction, grow-in, and ongoing agronomic consultation. Led by Geoff Ogilvy, Mike Cocking, and Ashley Mead, the firm's philosophy was cultivated in the sands of the Melbourne Sandbelt: architecture that makes the journey to every hole an unforgettable experience. Their first U.S. project was Shady Oaks in Fort Worth. A direct precedent for this work.",
     link: { label: "ocm.golf", url: "https://www.ocm.golf" },
   },
   {
-    name: "Randy Hoffacker", role: "Master Planner", org: "Destination Designs",
-    bio: "Randy Hoffacker is the spatial architect of this vision. He translates between what a great golf course needs and what a great resort requires. With deep experience in golf course master planning and a proven track record on Escalante Golf properties, his first site read set the direction: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. His background in construction management means he doesn't just design programs — he designs ones that can actually be built. His CAD files already contain the vocabulary Escalante and OCM need to see. He's the bridge between inspiration and buildability.",
+    name: "Destination Designs", role: "Master Planner", org: "Resort + Golf Master Planning",
+    bio: "Destination Designs brings deep experience in master planning golf resorts and destination properties, with a proven track record on Escalante Golf properties. The firm's first site read set the direction for Estes Park: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. Destination Designs bridges what a great golf course demands with what a great resort requires — delivering programs that are as buildable as they are compelling.",
   },
   {
-    name: "Work Architecture", role: "Planning + Strategy Lead", org: "Work Architecture",
-    bio: "Work Architecture is the strategic and planning intelligence layer for this project. Founded by Eric Whitmore, Work Architecture exists to help cities and developers see exactly what a project could be before they spend a dime figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision. No firm in DFW has taken a project from concept to charrette faster. That speed is a feature, not a shortcut.",
+    name: "Work Architecture", role: "Planning + Strategy Lead", org: "Planning + Strategy",
+    bio: "Work Architecture is the strategic and planning intelligence layer for this project. The firm works at the intersection of cities and developers — helping both sides see exactly what a project could be before a single dollar goes toward figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision.",
     link: { label: "workad.org", url: "https://www.workad.org" },
   },
 ];
@@ -1056,7 +1056,7 @@ function TeamSection({ onRespond }) {
     <SectionWrapper id="team">
       <SectionLabel number="05" label="The Team" />
       <SectionH2>The People Who Make This Real</SectionH2>
-      <SectionSub>Each person in this room brings something no one else can. This is who they are.</SectionSub>
+      <SectionSub>Each firm at this table brings something no one else can. This is the team that makes it real.</SectionSub>
       <Rule />
 
       {/* City of Grand Prairie — intro context, not a card */}
