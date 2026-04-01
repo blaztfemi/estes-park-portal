@@ -93,21 +93,10 @@ const globalStyles = `
 `;
 
 // ─── SCROLL REVEAL HOOK ──────────────────────────────────────────────────────
-// useScrollReveal accepts `unlocked` as a dependency so it re-fires the moment
-// the password gate is dismissed and all .reveal elements enter the DOM.
-// Root cause of the "scroll shows nothing on first login" bug:
-//   — on mount, unlocked=false → no .reveal elements exist → observer sees nothing
-//   — password entered → setUnlocked(true) re-renders all sections, but the old
-//     observer (with [] deps) never re-ran → elements stay hidden forever
-// Fix: dep on `unlocked`, skip when false, double-rAF after unlock so React has
-// fully committed + painted before we query .reveal elements.
-function useScrollReveal(unlocked) {
+// Content is always rendered (blur-overlay approach) so .reveal elements are
+// always in the DOM on mount. Simple [] deps — no unlocked workaround needed.
+function useScrollReveal() {
   useEffect(() => {
-    // Don't waste work while the gate is showing — no .reveal elements exist yet
-    if (!unlocked) return;
-
-    let rafId;
-
     const apply = () => {
       const els = document.querySelectorAll(".reveal");
       const obs = new IntersectionObserver(
@@ -116,7 +105,6 @@ function useScrollReveal(unlocked) {
       );
       els.forEach((el) => {
         const rect = el.getBoundingClientRect();
-        // Already in viewport right now → reveal immediately, no observer needed
         if (rect.top < window.innerHeight && rect.bottom >= 0) {
           el.classList.add("revealed");
         } else {
@@ -126,20 +114,13 @@ function useScrollReveal(unlocked) {
       return obs;
     };
 
-    // Double rAF: first frame = React commit, second frame = browser paint.
-    // Guarantees all .reveal nodes are measurable before we run getBoundingClientRect.
-    rafId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (window.__epObs) { window.__epObs.disconnect(); window.__epObs = null; }
-        window.__epObs = apply();
-      });
-    });
+    if (window.__epObs) { window.__epObs.disconnect(); window.__epObs = null; }
+    window.__epObs = apply();
 
     return () => {
-      cancelAnimationFrame(rafId);
       if (window.__epObs) { window.__epObs.disconnect(); window.__epObs = null; }
     };
-  }, [unlocked]); // re-run when gate clears
+  }, []);
 }
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
@@ -1538,7 +1519,11 @@ function Footer() {
 // Fallback is deliberately vague so it forces env setup on deploy.
 const PORTAL_KEY = import.meta.env.VITE_PORTAL_KEY;
 
-function PasswordGate({ onUnlock }) {
+// PasswordGate is now a fixed overlay — the portal content lives underneath,
+// blurred + dimmed via CSS filter. This means .reveal elements are always in
+// the DOM, the scroll observer works on mount, and unlock is a visual fade-out
+// rather than a conditional re-render.
+function PasswordGate({ onUnlock, fading }) {
   const [pw, setPw] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
@@ -1565,10 +1550,16 @@ function PasswordGate({ onUnlock }) {
         .shake { animation: shake 0.45s ease; }
       `}</style>
       <div style={{
-        minHeight: "100vh", background: C.warmBlack,
+        position: "fixed", inset: 0, zIndex: 9999,
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
         padding: "40px 24px",
+        background: "rgba(26,24,20,0.88)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+        opacity: fading ? 0 : 1,
+        transition: "opacity 0.55s ease",
+        pointerEvents: fading ? "none" : "auto",
       }}>
         <p style={{
           fontFamily: "'DM Sans', sans-serif", fontSize: 10,
@@ -1643,11 +1634,12 @@ function PasswordGate({ onUnlock }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function App() {
   const [activeSection, setActiveSection] = useState("story");
-  const [unlocked, setUnlocked] = useState(
-    () => !PORTAL_KEY || sessionStorage.getItem("ep_unlocked") === "1"
-  );
+  const startsUnlocked = !PORTAL_KEY || sessionStorage.getItem("ep_unlocked") === "1";
+  const [unlocked, setUnlocked] = useState(startsUnlocked);
+  const [overlayFading, setOverlayFading] = useState(false);
 
-  useScrollReveal(unlocked);
+  // Content is always in the DOM — observer works on mount with simple [] deps
+  useScrollReveal();
 
   useEffect(() => {
     const sections = ["story", "place", "market", "comps", "team", "library", "loop"];
@@ -1659,29 +1651,55 @@ export default function App() {
     return () => obs.disconnect();
   }, []);
 
-  const scrollToLoop = () => document.getElementById("loop")?.scrollIntoView({ behavior: "smooth" });
+  // Prevent scrolling while gate is showing
+  useEffect(() => {
+    document.body.style.overflow = unlocked ? "" : "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [unlocked]);
 
-  if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />;
+  const handleUnlock = () => {
+    setOverlayFading(true);          // start overlay fade-out
+    setTimeout(() => {
+      setUnlocked(true);             // lift blur from content
+      setOverlayFading(false);       // reset for safety (overlay unmounts anyway)
+    }, 560);
+  };
+
+  const scrollToLoop = () => document.getElementById("loop")?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <>
       <style>{globalStyles}</style>
-      <div className="grain" />
-      <Nav active={activeSection} />
-      <Hero />
-      <StorySection  onRespond={scrollToLoop} />
-      <ImageDivider src="/cedar-hill-bluebonnets.jpg" position="center 55%" />
-      <PlaceSection  onRespond={scrollToLoop} />
-      <ImageDivider src="/texas-sunset-field.jpg" position="center 40%" />
-      <MarketSection onRespond={scrollToLoop} />
-      <ImageDivider src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1600&q=85" position="center 60%" />
-      <CompsSection  onRespond={scrollToLoop} />
-      <ImageDivider src="/sand-valley-lodge.jpg" position="center 50%" />
-      <TeamSection   onRespond={scrollToLoop} />
-      <ImageDivider src="/golf-cart-oaks.jpg" position="center 45%" height="36vh" />
-      <LibrarySection />
-      <LoopSection />
-      <Footer />
+
+      {/* Fixed overlay — floats above the blurred content while locked */}
+      {!unlocked && (
+        <PasswordGate onUnlock={handleUnlock} fading={overlayFading} />
+      )}
+
+      {/* Portal content — always rendered; blurred + dimmed until unlocked */}
+      <div style={{
+        filter: unlocked ? "none" : "blur(14px) brightness(0.12) saturate(0.25)",
+        transition: overlayFading ? "filter 0.55s ease" : "none",
+        pointerEvents: unlocked ? "auto" : "none",
+        userSelect: unlocked ? "auto" : "none",
+      }}>
+        <div className="grain" />
+        <Nav active={activeSection} />
+        <Hero />
+        <StorySection  onRespond={scrollToLoop} />
+        <ImageDivider src="/cedar-hill-bluebonnets.jpg" position="center 55%" />
+        <PlaceSection  onRespond={scrollToLoop} />
+        <ImageDivider src="/texas-sunset-field.jpg" position="center 40%" />
+        <MarketSection onRespond={scrollToLoop} />
+        <ImageDivider src="https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1600&q=85" position="center 60%" />
+        <CompsSection  onRespond={scrollToLoop} />
+        <ImageDivider src="/sand-valley-lodge.jpg" position="center 50%" />
+        <TeamSection   onRespond={scrollToLoop} />
+        <ImageDivider src="/golf-cart-oaks.jpg" position="center 45%" height="36vh" />
+        <LibrarySection />
+        <LoopSection />
+        <Footer />
+      </div>
     </>
   );
 }
