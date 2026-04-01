@@ -1029,7 +1029,7 @@ function CompsSection({ onRespond }) {
   return (
     <SectionWrapper id="comps" alt>
       <SectionLabel number="04" label="The Comps" />
-      <SectionH2>{"It's Never Been Done."}<br />{"Just Never Here."}</SectionH2>
+      <SectionH2>{"It's Been Done Before..."}<br />{"Just Never In A Place Like This."}</SectionH2>
       <SectionSub>Twelve precedents — drawn directly from the charrette boards — that prove what's possible, and what each one teaches this project.</SectionSub>
       <Rule />
       <Body>The great golf destinations weren't acts of faith. They were acts of studied conviction — developers and architects who looked at what had worked elsewhere, understood exactly why it worked, and built something rooted in those principles but honest to their own land. Each of these twelve precedents was chosen because it speaks directly to a decision on the table for this site. Expand any card to read the intelligence. Download the full report to go deeper.</Body>
