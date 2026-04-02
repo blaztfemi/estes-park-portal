@@ -1530,12 +1530,12 @@ function LibrarySection() {
             color: "rgba(245,240,232,0.58)",
           }}>Additional research, financial models, and site data are available from the project team.</p>
         </div>
-        <a href="mailto:ericwhitmore@gmail.com" style={{
+        <span style={{
           fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.14em",
           textTransform: "uppercase", fontWeight: 600, color: C.sienna,
           border: `1px solid ${C.sienna}`, padding: "10px 20px",
-          textDecoration: "none", whiteSpace: "nowrap",
-        }}>Request materials →</a>
+          whiteSpace: "nowrap",
+        }}>Contact the project team for materials</span>
       </div>
     </SectionWrapper>
   );
@@ -1759,7 +1759,7 @@ function Footer() {
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, marginBottom: 20 }}>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: C.parchment, fontWeight: 400, fontVariantLigatures: "common-ligatures" }}>Estes Park</p>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: "rgba(245,240,232,0.28)", textTransform: "uppercase" }}>Work Architecture · Version 3.1 · April 2026</p>
-          <a href="mailto:ericwhitmore@gmail.com" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna, letterSpacing: "0.04em" }}>ericwhitmore@gmail.com</a>
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: "rgba(245,240,232,0.28)", letterSpacing: "0.04em" }}>wrkarc.com</span>
         </div>
         <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 12, color: "rgba(245,240,232,0.22)", lineHeight: 1.75 }}>
           This portal was built by Work Architecture as a living intelligence document for the Estes Park design charrette, April 1, 2026. It will be updated as the project evolves.
