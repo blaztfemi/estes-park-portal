@@ -561,15 +561,14 @@ function StorySection({ onRespond }) {
       <Rule />
       <TwoCol
         left={<>
-          <Body>There's a particular kind of project that doesn't come along often. Not the kind where the numbers align and the market is proven and the path of least resistance is obvious. The other kind. The kind where you look at a piece of land and feel something shift. The story the site is already telling is more compelling than anything a branding agency could invent.</Body>
-          <Body>This is that project.</Body>
-          <Body>Twelve hundred acres in Grand Prairie, Texas. Twenty minutes from one of the world's great airports. At the center of the fastest-growing major metropolitan area in the United States. On land that has been a seabed, a prairie, a Comanche hunting ground, a Mustang factory, a Navy airfield, and everything in between. On a peninsula crowned with elevation change that produces, if graded right, a 270-degree view of Mountain Creek Lake that no one in Dallas knows exists.</Body>
-          <Body>The opportunity isn't just financial, though the financial case is overwhelming. The opportunity is generational. Bandon Dunes transformed a dying Oregon fishing town into one of golf's holy sites in twenty-five years. Pinehurst has compounded mythology for one hundred and thirty. What was built in those places: the architecture, the land ethic, the walking culture, the accumulated stories of players and caddies and moments. All of it outlasts every pro forma.</Body>
-          <Body>That's what this conversation is about. Not what this project can earn. What it can become.</Body>
-          <Body>Ask anyone who has played the great destinations what they remember about the experience. The answer is remarkably consistent — and it almost never has anything to do with architecture. It comes back to the speed of the greens. The quality of the service. The moment they were greeted when they arrived and felt, immediately, that someone knew they were coming. The building is the frame. The memory is built by everything that happens inside it.</Body>
-          <Body>That distinction is the design mandate. Not a landmark. A memory. Not a hotel in golf clothing. A place where walking eighteen holes at dusk, with no cart path in sight and the city invisible behind the treeline, becomes the story someone tells for the rest of their golf life.</Body>
-          <Body>The design brief that came back from the first site walk set the tone for everything that followed. Keep the rooflines low, one to two stories at most, so there are no urban markers to orient by. No sense of scale that reminds you where you are. An architecture of purposeful disorientation: the kind that makes you feel, for the first time in a long time, like you've genuinely escaped.</Body>
-          <Body>That's the brief. That's the story. Everything that follows is the evidence that it's possible. The argument that it's time.</Body>
+          <Body>Some projects justify themselves on paper before anyone sets foot on the land. This one is different. Stand on the site and something shifts. The story the ground is already telling runs deeper than anything a consultant could sketch on a whiteboard, and it was there long before this team arrived.</Body>
+          <Body>Twelve hundred acres in Grand Prairie, Texas. Twenty minutes from one of the world's great airports. At the center of the fastest-growing major metropolitan area in the United States. On land that has been a seabed, a prairie, a Comanche hunting ground, a Mustang factory, a Navy airfield. On a peninsula crowned with elevation change that produces, if graded correctly, a 270-degree view of Mountain Creek Lake that almost no one in Dallas knows exists.</Body>
+          <Body>The financial case is overwhelming. The generational case is more important. Bandon Dunes transformed a dying Oregon fishing town into one of golf's holy sites in twenty-five years. Pinehurst has compounded mythology for one hundred and thirty. What those places built, the architecture, the land ethic, the walking culture, the accumulated stories of players and caddies and moments, outlasts every pro forma ever written about them.</Body>
+          <Body>This conversation is about what this project can become, not just what it can earn.</Body>
+          <Body>Ask anyone who has played the great destinations what they actually remember. The answer comes back the same way every time, and it has almost nothing to do with architecture. Speed of the greens. Quality of the service. The moment they arrived and felt, immediately, that someone already knew they were coming. The building is the frame. What lasts is everything that happens inside it.</Body>
+          <Body>That is the design mandate for this project. A walking round at dusk, no cart path in sight, the city invisible behind the treeline, the kind of round someone tells stories about for the rest of their time in the game. That is what gets built here.</Body>
+          <Body>The design brief that came back from the first site walk set the tone for everything that followed. Keep the rooflines low, one to two stories at most, so there are no urban markers to orient by. No sense of scale that reminds you where you are. An architecture of purposeful disorientation, the kind that makes you feel, for the first time in a long time, like you've genuinely escaped.</Body>
+          <Body>This is the brief. What follows is the evidence that the site, the market, the team, and the moment all point in the same direction.</Body>
           <GoDeeper links={[
             { label: "Bandon Dunes", url: "https://www.bandondunesgolf.com" },
             { label: "Pinehurst Resort", url: "https://www.pinehurst.com" },
@@ -583,7 +582,7 @@ function StorySection({ onRespond }) {
         </>}
       />
       <FeedbackPrompt
-        question="You've seen what makes an Escalante property work at the operational level. What does this project have to get right — in the first 90 days of operation — to earn the reputation this team is building toward?"
+        question="You've seen what makes an Escalante property work at the operational level. What does this project have to get right in the first 90 days of operation to earn the reputation this team is building toward?"
         onRespond={onRespond}
       />
     </SectionWrapper>
@@ -628,9 +627,9 @@ function PlaceSection({ onRespond }) {
           ]} />
 
           <SubHead>What the Site Walk Established</SubHead>
-          <Body>The first principle that came back from the master planning team is deceptively simple: intimate, gentle use of land. This site has room for everything. A project that tried to use all of it would ruin all of it. The more you try to pack in — the more amenities, the more buildings, the more things this place tries to be — the faster it loses the thing that makes it worth building at all.</Body>
-          <Body>The direction is toward space. Significant space between holes. Low buildings that don't compete with the landscape. Siting that creates disorientation — the feeling of being somewhere genuinely remote even though eight million people are thirty minutes away. The goal is to arrive here and lose your bearings in the best possible way. No obvious landmarks, no grand entrance, no scale that reminds you of the city you just left. A compass to orient yourself, and the invitation to simply get lost.</Body>
-          <Body>The clubhouse at the end of the round will be the punctuation mark — modest in scale, designed to grow — not the headline. The golf is the headline. The land is the story. The buildings exist to serve both without upstaging either.</Body>
+          <Body>The first principle that came back from the master planning team is deceptively simple: intimate, gentle use of land. This site has room for everything. A project that tried to use all of it would ruin all of it. The more amenities packed in, the more buildings, the more things this place tries to be to different people, the faster it loses the quality that makes it worth building in the first place.</Body>
+          <Body>The direction is toward space. Significant space between holes. Low buildings that sit in the landscape rather than compete with it. Siting that creates genuine disorientation, the feeling of being somewhere remote even though eight million people are thirty minutes away. The goal is to arrive here and lose your bearings in the best possible way, no obvious landmarks, no grand entrance, no scale that reminds you of the city you just left. A compass to orient yourself when you want one. The invitation to simply get lost when you don't.</Body>
+          <Body>The clubhouse at the end of the round is the punctuation mark, modest in scale, built to grow over time. The golf is the headline. The land is the story. The buildings serve both without trying to upstage either.</Body>
           <GoDeeper links={[
             { label: "Destination Design", url: "https://destinationdesignllc.com" },
           ]} />
@@ -673,7 +672,7 @@ function PlaceSection({ onRespond }) {
         </>}
       />
       <FeedbackPrompt
-        question="Walk-in, first impression. If this site delivers on the spatial promise — low buildings, open sky, no city visible — what's the single word or phrase you'd use to describe it to someone back at the office?"
+        question="Walk-in, first impression. If this site delivers on the spatial promise, low buildings, open sky, no city visible, what's the single word or phrase you'd use to describe it to someone back at the office?"
         onRespond={onRespond}
       />
     </SectionWrapper>
@@ -741,7 +740,7 @@ function MarketSection({ onRespond }) {
           ]} />
 
           <SubHead>PGA Frisco Already Proved It</SubHead>
-          <Body>The question isn't whether DFW can support a world-class golf resort. PGA Frisco already answered that with a $520M+ public-private partnership on 660 acres in Frisco, with the PGA of America headquarters, a 500-room Omni resort, two championship courses, and a projected $2.5 billion economic impact over 20 years. But the Omni is a convention hotel in golf clothing. What doesn't exist anywhere in DFW, anywhere in Texas, is a boutique, walking-only, architecturally pure destination where the golf is the entire point. That gap is this project's open window.</Body>
+          <Body>Whether DFW can support a world-class golf resort is no longer the question. PGA Frisco answered it with a $520M public-private partnership on 660 acres: PGA of America headquarters, a 500-room Omni, two championship courses, projected $2.5 billion in economic impact over 20 years. The Omni is a convention hotel in golf clothing. Nowhere in DFW, nowhere in Texas, does a boutique, walking-only, architecturally honest destination exist where the golf is the entire point. That gap is this project's opening.</Body>
           <Body style={{ fontStyle: "italic", opacity: 0.75 }}>Compare: Estes Park | 1,200 acres | 15–30 min from DFW core | 8.3M people in drive market. Bandon Dunes | 5 courses | 4.5 hours from Portland | 2.5M people in drive market. The math isn't close.</Body>
         </>}
         right={<>
@@ -1042,22 +1041,22 @@ function CompsSection({ onRespond }) {
 const TEAM = [
   {
     name: "Escalante Golf", role: "Golf Operator", org: "Boutique Golf Management",
-    bio: "Escalante Golf is the most distinctive boutique golf operator in America — a portfolio spanning 17 states that ranges from Top 100 World-ranked private clubs and walking-only pure golf experiences to full-scale resort operations. Every Escalante property carries a singular promise: no compromise on operational control, brand authority, or architectural conviction. The DFW market has been waiting for the flagship this region deserves. This is the project that delivers it.",
+    bio: "Escalante Golf is the most distinctive boutique golf operator in America, a portfolio spanning 17 states that runs from Top 100 World-ranked private clubs and walking-only pure golf experiences to full-scale resort operations. Every Escalante property carries a singular promise: no compromise on operational control, brand authority, or architectural conviction. The DFW market has been waiting for the flagship this region deserves. This is the project that delivers it.",
     link: { label: "escalantegolf.com", url: "https://www.escalantegolf.com" },
   },
   {
     name: "OCM Golf", role: "Golf Course Design + Build", org: "Ogilvy · Cocking · Mead",
-    bio: "Design. Build. Keep. OCM is the only firm in golf architecture that designs, builds, and maintains its own work — from first concept through construction, grow-in, and ongoing agronomic consultation. Led by Geoff Ogilvy, Mike Cocking, and Ashley Mead, the firm's philosophy was cultivated in the sands of the Melbourne Sandbelt: architecture that makes the journey to every hole an unforgettable experience. Their first U.S. project was Shady Oaks in Fort Worth. A direct precedent for this work.",
+    bio: "Design. Build. Keep. OCM is the only firm in golf architecture that designs, builds, and maintains its own work, from first concept through construction, grow-in, and ongoing agronomic consultation. Led by Geoff Ogilvy, Mike Cocking, and Ashley Mead, the firm's philosophy was cultivated in the sands of the Melbourne Sandbelt: architecture that makes the journey to every hole an experience worth remembering. Their first U.S. project was Shady Oaks in Fort Worth. A direct precedent for this work.",
     link: { label: "ocm.golf", url: "https://www.ocm.golf" },
   },
   {
     name: "Destination Design", role: "Master Planner", org: "Resort + Golf Master Planning",
-    bio: "Destination Design is the spatial intelligence layer of this project. The firm's principal brings rare breadth to the table — master planner, landscape architect, golf course expert, and the person this team looks to for vision and coordination when the ground truth has to align with the big idea. With deep experience planning golf resorts for Escalante and other premier operators, Destination Design's first site read set the foundational principle: intimate, gentle use of land. Space between the holes. Low rooflines that erase the horizon. Buildings that let you get lost in the landscape rather than anchor you to it. The spatial experience of the resort — how it feels to move through it, arrive at it, disappear into it — begins here.",
+    bio: "Destination Design is the spatial intelligence layer of this project. The firm's principal brings rare breadth to the table: master planner, landscape architect, golf course expert, and the person this team looks to for vision and coordination when the ground truth has to align with the big idea. With deep experience planning golf resorts for Escalante and other premier operators, Destination Design's first site read set the foundational principle: intimate, gentle use of land. Space between the holes. Low rooflines that erase the horizon. Buildings that let you get lost in the landscape rather than anchor you to it. How it feels to move through the resort, arrive at it, disappear into it, that work begins here.",
   },
   {
     name: "Work Architecture", role: "Planning + Strategy Lead", org: "Planning + Strategy",
-    bio: "Work Architecture is the strategic and planning intelligence layer for this project. The firm works at the intersection of cities and developers — helping both sides see exactly what a project could be before a single dollar goes toward figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision.",
-    link: { label: "workad.org", url: "https://www.workad.org" },
+    bio: "Work Architecture is the strategic and planning intelligence layer for this project. The firm works at the intersection of cities and developers, helping both sides see exactly what a project could be before a single dollar goes toward figuring it out the hard way. For Estes Park, that means originating the site intelligence, building the charrette framework, assembling the operator and design team, framing the community benefit argument for the city, and leading the process that turns raw potential into a fundable, buildable vision.",
+    link: { label: "wrkarc.com", url: "https://wrkarc.com" },
   },
 ];
 
@@ -1397,10 +1396,10 @@ function LoopSection() {
         <Rule dark />
         <TwoCol
           left={<>
-            <Body dark>The charrette team spent two days on this site, with this concept, with this operator. What came out of it is captured in everything you just read. The vision is sharper. The spatial logic is established. The team is assembled. The case is built.</Body>
-            <Body dark>What isn't finished is the critique.</Body>
-            <Body dark>You know Escalante's properties from the inside — what works operationally, where the gaps show up, what a guest says when they've had an experience that actually earned loyalty. That institutional knowledge doesn't exist in any charrette transcript. It lives in the people receiving this portal right now.</Body>
-            <Body dark>This is a direct request for your thinking. What the team got right. What they missed. What you'd push back on. What precedent from within the portfolio — or outside it — should be shaping decisions that haven't been made yet. The portal updates as the project evolves. What you send here routes directly to the project team and informs the next version.</Body>
+            <Body dark>The charrette team spent two days on this site, with this concept, with this operator. What came out of it is captured in everything you just read. The vision is sharper, the spatial logic is established, the team is assembled, and the case is built.</Body>
+            <Body dark>The one thing the transcript can't capture is yours.</Body>
+            <Body dark>You know Escalante's properties from the inside. You know what works operationally, where the gaps show up, what a guest says when they've had an experience that actually earned their loyalty. That knowledge doesn't live in any charrette notes. It lives in the people reading this right now.</Body>
+            <Body dark>This is a direct request for your thinking. What the team got right. What they missed. What you'd push back on. What precedent, from inside the portfolio or outside it, should be shaping decisions that haven't been locked in yet. What you send here routes directly to the project team and gets worked into the next version of this document.</Body>
 
             {submitted ? (
               <div className="reveal" style={{
@@ -1503,20 +1502,49 @@ function LoopSection() {
 
 // ─── FOOTER ──────────────────────────────────────────────────────────────────
 function Footer() {
+  const logos = [
+    { src: "/logo-gp.png",                 alt: "City of Grand Prairie" },
+    { src: "/logo-escalante.png",           alt: "Escalante Golf" },
+    { src: "/logo-ocm.png",                 alt: "OCM Golf" },
+    { src: "/logo-destination-design.png",  alt: "Destination Design" },
+    { src: "/logo-work.png",                alt: "Work Architecture" },
+  ];
   return (
     <footer style={{
-      background: C.warmBlack, padding: "40px 24px",
+      background: C.warmBlack, padding: "48px 24px 40px",
       borderTop: "1px solid rgba(245,240,232,0.06)",
       position: "relative", zIndex: 1,
     }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+
+        {/* Logo strip */}
+        <div style={{
+          display: "flex", flexWrap: "wrap",
+          justifyContent: "center", alignItems: "center",
+          gap: "32px 48px", marginBottom: 40,
+          paddingBottom: 36,
+          borderBottom: "1px solid rgba(245,240,232,0.07)",
+        }}>
+          {logos.map(({ src, alt }) => (
+            <img
+              key={alt} src={src} alt={alt}
+              style={{
+                height: 22, width: "auto",
+                filter: "brightness(0) invert(1)",
+                opacity: 0.28,
+                objectFit: "contain",
+              }}
+            />
+          ))}
+        </div>
+
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16, marginBottom: 20 }}>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: C.parchment, fontWeight: 400, fontVariantLigatures: "common-ligatures" }}>Estes Park</p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: "rgba(245,240,232,0.28)", textTransform: "uppercase" }}>Work Architecture · Version 2.4 · March 2026</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, letterSpacing: "0.1em", color: "rgba(245,240,232,0.28)", textTransform: "uppercase" }}>Work Architecture · Version 2.8 · April 2026</p>
           <a href="mailto:ericwhitmore@gmail.com" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: C.sienna, letterSpacing: "0.04em" }}>ericwhitmore@gmail.com</a>
         </div>
         <p style={{ fontFamily: "'Lora', serif", fontStyle: "italic", fontSize: 12, color: "rgba(245,240,232,0.22)", lineHeight: 1.75 }}>
-          This portal was built by Work Architecture as a living intelligence document for the Estes Park design charrette, March 31 – April 2, 2026. It will be updated as the project evolves. Version 1.0.
+          This portal was built by Work Architecture as a living intelligence document for the Estes Park design charrette, April 1, 2026. It will be updated as the project evolves.
         </p>
       </div>
     </footer>
