@@ -1207,6 +1207,44 @@ function VisionSection({ onRespond }) {
 
       <PullQuote>"You arrive curious. You leave converted."</PullQuote>
 
+      {/* Charrette PDF Download */}
+      <div className="reveal" style={{
+        marginTop: 48, marginBottom: 48, textAlign: "center",
+      }}>
+        <div style={{
+          borderTop: `1px solid ${C.rule}`, borderBottom: `1px solid ${C.rule}`,
+          padding: "32px 24px",
+        }}>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif", fontSize: 10,
+            letterSpacing: "0.16em", textTransform: "uppercase",
+            color: C.sage, marginBottom: 14, fontWeight: 500,
+          }}>Full Charrette Document</p>
+          <a
+            href="/charrette/estes-park-charrette-review.pdf"
+            download
+            style={{
+              display: "inline-block",
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13, fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: C.parchment,
+              background: C.sienna,
+              padding: "14px 36px",
+              textDecoration: "none",
+              transition: "opacity 0.2s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+          >Download Charrette Review (PDF)</a>
+          <p style={{
+            fontFamily: "'Lora', serif", fontStyle: "italic",
+            fontSize: 13, color: C.sage, marginTop: 14, opacity: 0.7,
+          }}>20 pages · April 2026</p>
+        </div>
+      </div>
+
       <FeedbackPrompt
         question="Having seen the direction — the Big Ideas, the zones, the master plan — what conviction came out of these three days that you think we haven't captured yet?"
         onRespond={onRespond}
