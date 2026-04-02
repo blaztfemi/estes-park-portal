@@ -566,6 +566,8 @@ function StorySection({ onRespond }) {
           <Body>Twelve hundred acres in Grand Prairie, Texas. Twenty minutes from one of the world's great airports. At the center of the fastest-growing major metropolitan area in the United States. On land that has been a seabed, a prairie, a Comanche hunting ground, a Mustang factory, a Navy airfield, and everything in between. On a peninsula crowned with elevation change that produces, if graded right, a 270-degree view of Mountain Creek Lake that no one in Dallas knows exists.</Body>
           <Body>The opportunity isn't just financial, though the financial case is overwhelming. The opportunity is generational. Bandon Dunes transformed a dying Oregon fishing town into one of golf's holy sites in twenty-five years. Pinehurst has compounded mythology for one hundred and thirty. What was built in those places: the architecture, the land ethic, the walking culture, the accumulated stories of players and caddies and moments. All of it outlasts every pro forma.</Body>
           <Body>That's what this conversation is about. Not what this project can earn. What it can become.</Body>
+          <Body>Ask anyone who has played the great destinations what they remember about the experience. The answer is remarkably consistent — and it almost never has anything to do with architecture. It comes back to the speed of the greens. The quality of the service. The moment they were greeted when they arrived and felt, immediately, that someone knew they were coming. The building is the frame. The memory is built by everything that happens inside it.</Body>
+          <Body>That distinction is the design mandate. Not a landmark. A memory. Not a hotel in golf clothing. A place where walking eighteen holes at dusk, with no cart path in sight and the city invisible behind the treeline, becomes the story someone tells for the rest of their golf life.</Body>
           <Body>The design brief that came back from the first site walk set the tone for everything that followed. Keep the rooflines low, one to two stories at most, so there are no urban markers to orient by. No sense of scale that reminds you where you are. An architecture of purposeful disorientation: the kind that makes you feel, for the first time in a long time, like you've genuinely escaped.</Body>
           <Body>That's the brief. That's the story. Everything that follows is the evidence that it's possible. The argument that it's time.</Body>
           <GoDeeper links={[
@@ -575,13 +577,13 @@ function StorySection({ onRespond }) {
         </>}
         right={<>
           <SectionImage src="/texas-saddle-windmill.jpg" position="center 40%" />
-          <PullQuote>"The land has been a seabed, a prairie, a hunting ground, a battlefield, a cotton farm, a Mustang factory, and a Navy base. What it has never been is a place where people come to walk quietly through native grass and feel the particular silence that exists when a city of 8 million is 20 miles away but invisible."</PullQuote>
+          <PullQuote>"You ask anyone what their best golf experience was. The image they see never has anything to do with design. It always has to do with how fast the greens were, what the service was, and how they were greeted."</PullQuote>
           <StatCard stat="1,200" label="Acres" sub="Nearly double PGA Frisco's footprint" />
           <StatCard stat="20 min" label="From DFW International Airport" sub="The closest world-class golf destination to any major U.S. metro" />
         </>}
       />
       <FeedbackPrompt
-        question="What does 'leaving something indelible' mean to you for this project? What would make this worth pointing to in 50 years?"
+        question="You've seen what makes an Escalante property work at the operational level. What does this project have to get right — in the first 90 days of operation — to earn the reputation this team is building toward?"
         onRespond={onRespond}
       />
     </SectionWrapper>
@@ -625,6 +627,14 @@ function PlaceSection({ onRespond }) {
             { label: "Portal to Texas History", url: "https://texashistory.unt.edu" },
           ]} />
 
+          <SubHead>What the Site Walk Established</SubHead>
+          <Body>The first principle that came back from the master planning team is deceptively simple: intimate, gentle use of land. This site has room for everything. A project that tried to use all of it would ruin all of it. The more you try to pack in — the more amenities, the more buildings, the more things this place tries to be — the faster it loses the thing that makes it worth building at all.</Body>
+          <Body>The direction is toward space. Significant space between holes. Low buildings that don't compete with the landscape. Siting that creates disorientation — the feeling of being somewhere genuinely remote even though eight million people are thirty minutes away. The goal is to arrive here and lose your bearings in the best possible way. No obvious landmarks, no grand entrance, no scale that reminds you of the city you just left. A compass to orient yourself, and the invitation to simply get lost.</Body>
+          <Body>The clubhouse at the end of the round will be the punctuation mark — modest in scale, designed to grow — not the headline. The golf is the headline. The land is the story. The buildings exist to serve both without upstaging either.</Body>
+          <GoDeeper links={[
+            { label: "Destination Design", url: "https://destinationdesignllc.com" },
+          ]} />
+
           <SubHead>The Name Question</SubHead>
           <Body>The working name "Estes Park" is borrowed from one of the most famous mountain destinations in America: a Colorado gateway town at 7,522 feet elevation, surrounded by 14,000-foot peaks, home to Rocky Mountain National Park and the hotel that inspired The Shining. Applying this name to a lakeside golf resort on Texas prairie creates immediate brand confusion.</Body>
           <Body>The great golf destinations named themselves from the land. Bandon Dunes describes sand dunes near the Oregon coast. Sand Valley names the prehistoric glacial dunes in central Wisconsin. The Fall Line references the geological escarpment between Georgia's Piedmont and Coastal Plain. The strongest names grow from something verifiably real about the site. This land offers: the White Rock Escarpment, Mountain Creek, the Austin Chalk, and the Cross Timbers. The name this project earns should be as honest and irreplaceable as the land itself.</Body>
@@ -663,7 +673,7 @@ function PlaceSection({ onRespond }) {
         </>}
       />
       <FeedbackPrompt
-        question="What does this place remind you of? What name would you give it if you had to explain it to someone who'd never been to Texas?"
+        question="Walk-in, first impression. If this site delivers on the spatial promise — low buildings, open sky, no city visible — what's the single word or phrase you'd use to describe it to someone back at the office?"
         onRespond={onRespond}
       />
     </SectionWrapper>
@@ -1041,8 +1051,8 @@ const TEAM = [
     link: { label: "ocm.golf", url: "https://www.ocm.golf" },
   },
   {
-    name: "Destination Designs", role: "Master Planner", org: "Resort + Golf Master Planning",
-    bio: "Destination Designs brings deep experience in master planning golf resorts and destination properties, with a proven track record on Escalante Golf properties. The firm's first site read set the direction for Estes Park: an architecture of purposeful disorientation, where low rooflines and careful siting make the city disappear. Destination Designs bridges what a great golf course demands with what a great resort requires — delivering programs that are as buildable as they are compelling.",
+    name: "Destination Design", role: "Master Planner", org: "Resort + Golf Master Planning",
+    bio: "Destination Design is the spatial intelligence layer of this project. The firm's principal brings rare breadth to the table — master planner, landscape architect, golf course expert, and the person this team looks to for vision and coordination when the ground truth has to align with the big idea. With deep experience planning golf resorts for Escalante and other premier operators, Destination Design's first site read set the foundational principle: intimate, gentle use of land. Space between the holes. Low rooflines that erase the horizon. Buildings that let you get lost in the landscape rather than anchor you to it. The spatial experience of the resort — how it feels to move through it, arrive at it, disappear into it — begins here.",
   },
   {
     name: "Work Architecture", role: "Planning + Strategy Lead", org: "Planning + Strategy",
@@ -1324,12 +1334,12 @@ function LoopSection() {
   });
 
   const prompts = [
-    { section: "The Story",    q: "What does 'leaving something indelible' mean for a project on this specific piece of ground?" },
-    { section: "The Place",    q: "What name belongs here, one that could only be this place?" },
-    { section: "The Market",   q: "What justifies the premium beyond the course itself?" },
-    { section: "The Comps",    q: "What does this site have that none of the comps had?" },
-    { section: "The Team",     q: "Who else belongs at this table?" },
-    { section: "Something Else", q: "If you left this portal with one thought not captured above, this is where it goes." },
+    { section: "The Story",    q: "What has to be true about Day 1 operations for this project to earn the reputation it's being built toward?" },
+    { section: "The Place",    q: "What does this site have — or not have — that should shape decisions that haven't been made yet?" },
+    { section: "The Market",   q: "The DFW market case is made. What's the one thing a DFW golfer expects that would need to be exceeded — not just met — to drive real word-of-mouth?" },
+    { section: "The Comps",    q: "Which of the twelve comparables in this portal is closest to what this project should actually become? What does it do that we should steal?" },
+    { section: "The Team",     q: "Who else belongs at this table before the design phase begins?" },
+    { section: "Something Else", q: "What's the thing this team got wrong, or hasn't asked yet, that you'd be thinking about if this were your project?" },
   ];
 
   const handleSubmit = async (e) => {
@@ -1375,23 +1385,22 @@ function LoopSection() {
           fontWeight: 400, lineHeight: 1.16, marginBottom: 8, maxWidth: 820,
           color: C.parchment, fontVariantLigatures: "common-ligatures",
         }}>
-          This Document Isn't Finished.<br />Neither Is the Vision.
+          You Weren't in the Room.<br />You Should Be in This Conversation.
         </h2>
         <p className="reveal reveal-delay-1" style={{
           fontFamily: "'Lora', serif", fontStyle: "italic",
           fontSize: "clamp(15px, 1.9vw, 20px)",
           color: "rgba(245,240,232,0.45)", marginBottom: 40, lineHeight: 1.55,
         }}>
-          The conversation that extends the charrette. Add your voice.
+          The charrette happened. Now the people who know Escalante deepest get their say.
         </p>
         <Rule dark />
         <TwoCol
           left={<>
-            <Body dark>Everything you've read here was assembled from public records, site data, market research, and the conversations that have already happened about this place. It is as complete as one team can make it.</Body>
-            <Body dark>But it is not finished.</Body>
-            <Body dark>The next version of this document will reflect what you think. What you know that isn't here. What precedent we missed. What question we haven't asked yet. What moment from your own career — your own experience of watching a place become something extraordinary — changes the way this project should be told.</Body>
-            <Body dark>Not a survey. A genuine request for the thinking that only people in this room can provide.</Body>
-            <Body dark>When you send a response here, it routes directly to the project team. Every submission is reviewed. The best intelligence gets incorporated into the next version of this portal. You'll see it reflected back in the research, the arguments, the questions this project asks of the city, the architects, and itself. The portal gets smarter because you engage with it. That's the design.</Body>
+            <Body dark>The charrette team spent two days on this site, with this concept, with this operator. What came out of it is captured in everything you just read. The vision is sharper. The spatial logic is established. The team is assembled. The case is built.</Body>
+            <Body dark>What isn't finished is the critique.</Body>
+            <Body dark>You know Escalante's properties from the inside — what works operationally, where the gaps show up, what a guest says when they've had an experience that actually earned loyalty. That institutional knowledge doesn't exist in any charrette transcript. It lives in the people receiving this portal right now.</Body>
+            <Body dark>This is a direct request for your thinking. What the team got right. What they missed. What you'd push back on. What precedent from within the portfolio — or outside it — should be shaping decisions that haven't been made yet. The portal updates as the project evolves. What you send here routes directly to the project team and informs the next version.</Body>
 
             {submitted ? (
               <div className="reveal" style={{
