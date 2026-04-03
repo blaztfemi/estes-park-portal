@@ -576,7 +576,15 @@ function StorySection({ onRespond }) {
           ]} />
         </>}
         right={<>
-          <SectionImage src="/father-daughter-golf.jpg" position="center 30%" />
+          <div className="reveal reveal-delay-1" style={{
+            width: "100%",
+            aspectRatio: "3 / 4",
+            backgroundImage: "url(/father-daughter-golf.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center 20%",
+            filter: "sepia(6%) contrast(96%) brightness(98%)",
+            marginBottom: 24,
+          }} />
           <PullQuote>"You ask anyone what their best golf experience was. The image they see never has anything to do with design. It always has to do with how fast the greens were, what the service was, and how they were greeted."</PullQuote>
           <StatCard stat="1,200" label="Acres" sub="Nearly double PGA Frisco's footprint" />
           <StatCard stat="20 min" label="From DFW International Airport" sub="The closest world-class golf destination to any major U.S. metro" />
