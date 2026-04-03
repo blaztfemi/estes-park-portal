@@ -1780,57 +1780,51 @@ const PORTAL_KEY = import.meta.env.VITE_PORTAL_KEY;
 // rather than a conditional re-render.
 function PasswordGate({ onUnlock, fading }) {
   const [email, setEmail] = useState("");
-  const [emailLocked, setEmailLocked] = useState(false);
-  const [emailError, setEmailError] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const [shake, setShake] = useState(false);
 
-  // Strict email validation — blocks obvious fakes
   const isValidEmail = (addr) => {
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!re.test(addr)) return false;
-    // Block disposable/temp email domains
     const blocked = ["mailinator.com","guerrillamail.com","tempmail.com","throwaway.email",
       "yopmail.com","sharklasers.com","guerrillamailblock.com","grr.la","discard.email",
       "trashmail.com","10minutemail.com","temp-mail.org","fakeinbox.com","maildrop.cc"];
     const domain = addr.split("@")[1].toLowerCase();
-    if (blocked.includes(domain)) return false;
-    return true;
+    return !blocked.includes(domain);
   };
 
-  const confirmEmail = () => {
-    const trimmed = email.trim().toLowerCase();
-    if (!trimmed) {
+  const attempt = () => {
+    const trimmedEmail = email.trim().toLowerCase();
+    // Validate email
+    if (!trimmedEmail) {
       setEmailError("Please enter your email address.");
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
       return;
     }
-    if (!isValidEmail(trimmed)) {
+    if (!isValidEmail(trimmedEmail)) {
       setEmailError("Please enter a valid email address.");
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
     }
-    setEmail(trimmed);
-    setEmailLocked(true);
     setEmailError("");
-  };
-
-  const attempt = () => {
+    // Validate password
     if (PORTAL_KEY && pw.trim() === PORTAL_KEY.trim()) {
-      // Log the portal access to Formspree
       fetch("https://formspree.io/f/xaqlygol", {
         method: "POST",
         body: JSON.stringify({
-          _subject: "Portal Access Log",
-          email: email,
+          _subject: "Portal Access — " + trimmedEmail,
+          email: trimmedEmail,
           action: "Portal sign-in",
           timestamp: new Date().toISOString(),
         }),
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
       }).catch(() => {});
       sessionStorage.setItem("ep_unlocked", "1");
-      sessionStorage.setItem("ep_email", email);
+      sessionStorage.setItem("ep_email", trimmedEmail);
       onUnlock();
     } else {
       setError(true);
@@ -1844,7 +1838,13 @@ function PasswordGate({ onUnlock, fading }) {
     background: "rgba(245,240,232,0.06)",
     color: C.parchment, fontFamily: "'Lora', serif", fontSize: 18,
     outline: "none", letterSpacing: "0.06em", boxSizing: "border-box",
-    marginBottom: 12,
+  };
+
+  const labelStyle = {
+    fontFamily: "'DM Sans', sans-serif", fontSize: 10,
+    letterSpacing: "0.14em", textTransform: "uppercase",
+    color: "rgba(245,240,232,0.42)", display: "block",
+    marginBottom: 8, fontWeight: 500,
   };
 
   return (
@@ -1888,95 +1888,73 @@ function PasswordGate({ onUnlock, fading }) {
           fontSize: 15, color: "rgba(245,240,232,0.38)",
           marginBottom: 48, textAlign: "center",
         }}>
-          {emailLocked
-            ? "Now enter the access code shared by the project team."
-            : "Sign in with your email to continue."}
+          Enter your email and the Estes Park Charrette password to continue.
         </p>
         <div className={shake ? "shake" : ""} style={{ width: "100%", maxWidth: 360 }}>
-          {/* Step 1: Email */}
-          {!emailLocked ? (
-            <>
-              <input
-                type="email"
-                value={email}
-                onChange={e => { setEmail(e.target.value); setEmailError(""); }}
-                onKeyDown={e => e.key === "Enter" && confirmEmail()}
-                placeholder="Your email address"
-                autoFocus
-                autoComplete="email"
-                style={{
-                  ...inputBase,
-                  border: `1px solid ${emailError ? C.sienna : "rgba(245,240,232,0.12)"}`,
-                }}
-              />
-              {emailError && (
-                <p style={{
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-                  color: C.sienna, letterSpacing: "0.12em",
-                  textTransform: "uppercase", marginBottom: 12,
-                }}>{emailError}</p>
-              )}
-              <button
-                onClick={confirmEmail}
-                style={{
-                  width: "100%", padding: "16px",
-                  background: C.sienna, border: "none",
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-                  letterSpacing: "0.2em", textTransform: "uppercase",
-                  fontWeight: 600, color: C.parchment, cursor: "pointer",
-                  transition: "opacity 0.2s",
-                }}
-                onMouseEnter={e => e.target.style.opacity = 0.85}
-                onMouseLeave={e => e.target.style.opacity = 1}
-              >Continue →</button>
-            </>
-          ) : (
-            <>
-              {/* Confirmed email display */}
+          {/* Email */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={labelStyle}>Your email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setEmailError(""); }}
+              onKeyDown={e => e.key === "Enter" && document.getElementById("ep-pw").focus()}
+              placeholder="name@company.com"
+              autoFocus
+              autoComplete="email"
+              style={{
+                ...inputBase,
+                border: `1px solid ${emailError ? C.sienna : "rgba(245,240,232,0.12)"}`,
+              }}
+            />
+            {emailError && (
               <p style={{
                 fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-                letterSpacing: "0.08em", color: "rgba(245,240,232,0.45)",
-                marginBottom: 16, textAlign: "center",
-              }}>{email}</p>
-              {/* Step 2: Access code */}
-              <input
-                type="password"
-                value={pw}
-                onChange={e => { setPw(e.target.value); setError(false); }}
-                onKeyDown={e => e.key === "Enter" && attempt()}
-                placeholder="Access code"
-                autoFocus
-                style={{
-                  ...inputBase,
-                  border: `1px solid ${error ? C.sienna : "rgba(245,240,232,0.12)"}`,
-                }}
-              />
-              {error && (
-                <p style={{
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-                  color: C.sienna, letterSpacing: "0.12em",
-                  textTransform: "uppercase", marginBottom: 12,
-                }}>
-                  Incorrect code. Try again.
-                </p>
-              )}
-              <button
-                onClick={attempt}
-                style={{
-                  width: "100%", padding: "16px",
-                  background: C.sienna, border: "none",
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-                  letterSpacing: "0.2em", textTransform: "uppercase",
-                  fontWeight: 600, color: C.parchment, cursor: "pointer",
-                  transition: "opacity 0.2s",
-                }}
-                onMouseEnter={e => e.target.style.opacity = 0.85}
-                onMouseLeave={e => e.target.style.opacity = 1}
-              >
-                Enter portal →
-              </button>
-            </>
-          )}
+                color: C.sienna, letterSpacing: "0.12em",
+                textTransform: "uppercase", marginTop: 8,
+              }}>{emailError}</p>
+            )}
+          </div>
+          {/* Password */}
+          <div style={{ marginBottom: 24 }}>
+            <label style={labelStyle}>Charrette password</label>
+            <input
+              id="ep-pw"
+              type="password"
+              value={pw}
+              onChange={e => { setPw(e.target.value); setError(false); }}
+              onKeyDown={e => e.key === "Enter" && attempt()}
+              placeholder="Enter password"
+              style={{
+                ...inputBase,
+                border: `1px solid ${error ? C.sienna : "rgba(245,240,232,0.12)"}`,
+              }}
+            />
+            {error && (
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                color: C.sienna, letterSpacing: "0.12em",
+                textTransform: "uppercase", marginTop: 8,
+              }}>
+                Incorrect password. Try again.
+              </p>
+            )}
+          </div>
+          <button
+            onClick={attempt}
+            style={{
+              width: "100%", padding: "16px",
+              background: C.sienna, border: "none",
+              fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+              letterSpacing: "0.2em", textTransform: "uppercase",
+              fontWeight: 600, color: C.parchment, cursor: "pointer",
+              transition: "opacity 0.2s",
+            }}
+            onMouseEnter={e => e.target.style.opacity = 0.85}
+            onMouseLeave={e => e.target.style.opacity = 1}
+          >
+            Enter portal →
+          </button>
         </div>
       </div>
     </>
