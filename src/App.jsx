@@ -577,7 +577,6 @@ function StorySection({ onRespond }) {
         </>}
         right={<>
           <SectionImage src="/father-daughter-golf.jpg" position="center 30%" />
-          <SectionImage src="/texas-saddle-windmill.jpg" position="center 40%" />
           <PullQuote>"You ask anyone what their best golf experience was. The image they see never has anything to do with design. It always has to do with how fast the greens were, what the service was, and how they were greeted."</PullQuote>
           <StatCard stat="1,200" label="Acres" sub="Nearly double PGA Frisco's footprint" />
           <StatCard stat="20 min" label="From DFW International Airport" sub="The closest world-class golf destination to any major U.S. metro" />
