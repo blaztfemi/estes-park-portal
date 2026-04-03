@@ -273,7 +273,7 @@ function Hero() {
           fontWeight: 400, color: C.parchment, lineHeight: 1.22, marginBottom: 28,
           letterSpacing: "-0.01em", fontVariantLigatures: "common-ligatures",
         }}>
-          The Land Is Ready. The City Is Ready. Now We Decide.
+          This could be someone's very first impression of what golf is all about. It could be what makes them fall in love with it forever.
         </h1>
 
         {/* 60px sienna rule */}
@@ -1779,19 +1779,72 @@ const PORTAL_KEY = import.meta.env.VITE_PORTAL_KEY;
 // the DOM, the scroll observer works on mount, and unlock is a visual fade-out
 // rather than a conditional re-render.
 function PasswordGate({ onUnlock, fading }) {
+  const [email, setEmail] = useState("");
+  const [emailLocked, setEmailLocked] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
 
+  // Strict email validation — blocks obvious fakes
+  const isValidEmail = (addr) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!re.test(addr)) return false;
+    // Block disposable/temp email domains
+    const blocked = ["mailinator.com","guerrillamail.com","tempmail.com","throwaway.email",
+      "yopmail.com","sharklasers.com","guerrillamailblock.com","grr.la","discard.email",
+      "trashmail.com","10minutemail.com","temp-mail.org","fakeinbox.com","maildrop.cc"];
+    const domain = addr.split("@")[1].toLowerCase();
+    if (blocked.includes(domain)) return false;
+    return true;
+  };
+
+  const confirmEmail = () => {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed) {
+      setEmailError("Please enter your email address.");
+      return;
+    }
+    if (!isValidEmail(trimmed)) {
+      setEmailError("Please enter a valid email address.");
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      return;
+    }
+    setEmail(trimmed);
+    setEmailLocked(true);
+    setEmailError("");
+  };
+
   const attempt = () => {
     if (PORTAL_KEY && pw.trim() === PORTAL_KEY.trim()) {
+      // Log the portal access to Formspree
+      fetch("https://formspree.io/f/xaqlygol", {
+        method: "POST",
+        body: JSON.stringify({
+          _subject: "Portal Access Log",
+          email: email,
+          action: "Portal sign-in",
+          timestamp: new Date().toISOString(),
+        }),
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      }).catch(() => {});
       sessionStorage.setItem("ep_unlocked", "1");
+      sessionStorage.setItem("ep_email", email);
       onUnlock();
     } else {
       setError(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
+  };
+
+  const inputBase = {
+    width: "100%", padding: "16px 20px",
+    background: "rgba(245,240,232,0.06)",
+    color: C.parchment, fontFamily: "'Lora', serif", fontSize: 18,
+    outline: "none", letterSpacing: "0.06em", boxSizing: "border-box",
+    marginBottom: 12,
   };
 
   return (
@@ -1835,49 +1888,95 @@ function PasswordGate({ onUnlock, fading }) {
           fontSize: 15, color: "rgba(245,240,232,0.38)",
           marginBottom: 48, textAlign: "center",
         }}>
-          Enter the access code shared by the project team.
+          {emailLocked
+            ? "Now enter the access code shared by the project team."
+            : "Sign in with your email to continue."}
         </p>
         <div className={shake ? "shake" : ""} style={{ width: "100%", maxWidth: 360 }}>
-          <input
-            type="password"
-            value={pw}
-            onChange={e => { setPw(e.target.value); setError(false); }}
-            onKeyDown={e => e.key === "Enter" && attempt()}
-            placeholder="Access code"
-            autoFocus
-            style={{
-              width: "100%", padding: "16px 20px",
-              background: "rgba(245,240,232,0.06)",
-              border: `1px solid ${error ? C.sienna : "rgba(245,240,232,0.12)"}`,
-              color: C.parchment, fontFamily: "'Lora', serif", fontSize: 18,
-              outline: "none", letterSpacing: "0.06em", boxSizing: "border-box",
-              marginBottom: 12,
-            }}
-          />
-          {error && (
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-              color: C.sienna, letterSpacing: "0.12em",
-              textTransform: "uppercase", marginBottom: 12,
-            }}>
-              Incorrect code. Try again.
-            </p>
+          {/* Step 1: Email */}
+          {!emailLocked ? (
+            <>
+              <input
+                type="email"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setEmailError(""); }}
+                onKeyDown={e => e.key === "Enter" && confirmEmail()}
+                placeholder="Your email address"
+                autoFocus
+                autoComplete="email"
+                style={{
+                  ...inputBase,
+                  border: `1px solid ${emailError ? C.sienna : "rgba(245,240,232,0.12)"}`,
+                }}
+              />
+              {emailError && (
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                  color: C.sienna, letterSpacing: "0.12em",
+                  textTransform: "uppercase", marginBottom: 12,
+                }}>{emailError}</p>
+              )}
+              <button
+                onClick={confirmEmail}
+                style={{
+                  width: "100%", padding: "16px",
+                  background: C.sienna, border: "none",
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                  letterSpacing: "0.2em", textTransform: "uppercase",
+                  fontWeight: 600, color: C.parchment, cursor: "pointer",
+                  transition: "opacity 0.2s",
+                }}
+                onMouseEnter={e => e.target.style.opacity = 0.85}
+                onMouseLeave={e => e.target.style.opacity = 1}
+              >Continue →</button>
+            </>
+          ) : (
+            <>
+              {/* Confirmed email display */}
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                letterSpacing: "0.08em", color: "rgba(245,240,232,0.45)",
+                marginBottom: 16, textAlign: "center",
+              }}>{email}</p>
+              {/* Step 2: Access code */}
+              <input
+                type="password"
+                value={pw}
+                onChange={e => { setPw(e.target.value); setError(false); }}
+                onKeyDown={e => e.key === "Enter" && attempt()}
+                placeholder="Access code"
+                autoFocus
+                style={{
+                  ...inputBase,
+                  border: `1px solid ${error ? C.sienna : "rgba(245,240,232,0.12)"}`,
+                }}
+              />
+              {error && (
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                  color: C.sienna, letterSpacing: "0.12em",
+                  textTransform: "uppercase", marginBottom: 12,
+                }}>
+                  Incorrect code. Try again.
+                </p>
+              )}
+              <button
+                onClick={attempt}
+                style={{
+                  width: "100%", padding: "16px",
+                  background: C.sienna, border: "none",
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 11,
+                  letterSpacing: "0.2em", textTransform: "uppercase",
+                  fontWeight: 600, color: C.parchment, cursor: "pointer",
+                  transition: "opacity 0.2s",
+                }}
+                onMouseEnter={e => e.target.style.opacity = 0.85}
+                onMouseLeave={e => e.target.style.opacity = 1}
+              >
+                Enter portal →
+              </button>
+            </>
           )}
-          <button
-            onClick={attempt}
-            style={{
-              width: "100%", padding: "16px",
-              background: C.sienna, border: "none",
-              fontFamily: "'DM Sans', sans-serif", fontSize: 11,
-              letterSpacing: "0.2em", textTransform: "uppercase",
-              fontWeight: 600, color: C.parchment, cursor: "pointer",
-              transition: "opacity 0.2s",
-            }}
-            onMouseEnter={e => e.target.style.opacity = 0.85}
-            onMouseLeave={e => e.target.style.opacity = 1}
-          >
-            Enter portal →
-          </button>
         </div>
       </div>
     </>
